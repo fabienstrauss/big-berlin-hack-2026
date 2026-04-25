@@ -77,3 +77,9 @@ next-env.d.ts
 /skills/
 /skills-lock.json
 /supabase/.temp/
+
+# local artifacts and IDE config
+/artifacts/
+artifacts-working-now.png
+*.webm
+.vscode/
