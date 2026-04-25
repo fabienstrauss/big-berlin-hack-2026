@@ -225,7 +225,7 @@ export async function createVideoGenerationJob(
     };
 
     const updatedRow = await updateJobRow(id, {
-      status: 'queued',
+      status: 'running',
       request_payload: {
         input,
         composedPrompt,
