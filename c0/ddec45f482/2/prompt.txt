@@ -1,0 +1,49 @@
+Update app/components/workspace/TopNavigation.tsx to only have the three steps and the sync status tag. make it so i can switch the pages (do not actually switch but make it clickable i want to say)
+
+---
+
+but remove the logo and text, really only want the three steps and the tag
+
+---
+
+ok it does not need to have full width, only have it take the place it needs to. dont put everything in one big nav. have the three steps as one component in center and next to it the tag. no need for a box with white bg, you understand what i mean?
+
+---
+
+ok looks nice but behind those components it is not transparent as i expected it to be
+
+---
+
+sorry maybe i explained wrong, revert the last change, didnt mean that background
+
+---
+
+I THINK, I AM NOT SURE, but this div <header class="pointer-events-none fixed inset-x-0 top-0 z-20 flex justify-center px-4 pt-6"><div class="pointer-events-auto flex items-center gap-2"><nav class="flex items-center gap-1 rounded-full border border-slate-200/60 bg-white/80 p-1 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_4px_6px_-2px_rgba(0,0,0,0.05)] backdrop-blur-md"><button class="rounded-full px-4 py-1.5 text-[10px] font-bold tracking-[0.12em] transition-all bg-slate-900 text-white shadow-sm">1<!-- -->. <!-- -->BRAINSTORMING</button><button class="rounded-full px-4 py-1.5 text-[10px] font-bold tracking-[0.12em] transition-all text-slate-400 hover:bg-slate-100 hover:text-slate-600">2<!-- -->. <!-- -->CHOICE</button><button class="rounded-full px-4 py-1.5 text-[10px] font-bold tracking-[0.12em] transition-all text-slate-400 hover:bg-slate-100 hover:text-slate-600">3<!-- -->. <!-- -->GENERATING</button></nav><span title="Saved" class="rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-[0.12em] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_4px_6px_-2px_rgba(0,0,0,0.05)] backdrop-blur-md transition-colors border-slate-200/60 bg-white/80 text-slate-500">SAVED</span></div></header> i think its having the bg problem and isnt transparent
+
+---
+
+i think its the <header> component which should be transparent, can you check? maybe its in different file
+
+---
+
+still there, can you investigate more?
+
+---
+
+ok do the following: we are speaking of the tool bar with the template part:  make the template modal be a galery of all templates available. have it fall
+  back if there is no data available. make it use superbase bucket in the end
+  where we store our templates. make sure the modeal fits on the screen and if too
+  much content we just scroll through gallery. i was thinking of some kind of
+  printerest style of gallery. any claridications?
+
+---
+
+dont make it a whole modal, make it more minimalistic, just some kind of dropdown same to other add buttons, then really only display the actual content, no search, now tags, no fitlers, just the preview of the content, videos autoplay. as i tried to say, use Masonry Gallery type.
+
+---
+
+then for the card that gets placed on canvas remove the actual prompts, dont need to display.
+
+---
+
+for deleting an object at a small verification on if the user really wants to delete

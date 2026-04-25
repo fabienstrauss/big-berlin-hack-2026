@@ -1,0 +1,172 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "c0ddec45f482",
+  "session_id": "0ea12243-7f4d-440b-9696-08e38355b60e",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T15:31:22.274851Z",
+  "branch": "feat/llm-tooling",
+  "checkpoints_count": 12,
+  "files_touched": [
+    "app/api/generate/route.ts",
+    "app/api/search/route.ts",
+    "app/api/templates/apply/route.ts",
+    "app/components/workspace/TemplateGallery.tsx",
+    "app/components/workspace/TopNavigation.tsx",
+    "app/components/workspace/WorkspaceActionPanel.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/components/workspace/nodes/CanvasCardNode.tsx",
+    "app/hooks/useCanvasBoard.ts",
+    "app/lib/canvas/contracts.ts",
+    "app/lib/canvas/mock-content.ts",
+    "app/lib/canvas/persistence.ts",
+    "app/lib/canvas/sample-data.ts",
+    "app/lib/canvas/types.ts",
+    "app/lib/templates/catalog.ts"
+  ],
+  "agent": "Gemini CLI",
+  "model": "gemini-3-flash-preview",
+  "turn_id": "5f3e5ffdfca8",
+  "session_metrics": {
+    "turn_count": 12
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T15:31:22.257942Z",
+    "agent_lines": 551,
+    "agent_removed": 323,
+    "human_added": 0,
+    "human_modified": 25,
+    "human_removed": 0,
+    "total_committed": 576,
+    "total_lines_changed": 899,
+    "agent_percentage": 97.21913236929922,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 766,
+      "user_lines_removed": 7,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".idea/misc.xml": 1,
+        "app/api/generate/route.ts": 14,
+        "app/api/search/route.ts": 11,
+        "app/api/templates/apply/route.ts": 14,
+        "app/components/workspace/WorkspaceCanvas.tsx": 34,
+        "app/hooks/useCanvasBoard.ts": 12,
+        "app/lib/canvas/persistence.ts": 1,
+        "app/lib/providers/env.ts": 15,
+        "app/lib/providers/gemini.ts": 261,
+        "app/lib/providers/openai.ts": 209,
+        "app/lib/providers/tavily.ts": 143,
+        "app/lib/supabase/constants.ts": 2,
+        "app/lib/supabase/storage-server.ts": 49
+      },
+      "user_removed_per_file": {
+        ".idea/misc.xml": 1,
+        "app/api/generate/route.ts": 1,
+        "app/api/search/route.ts": 1,
+        "app/api/templates/apply/route.ts": 1,
+        "app/hooks/useCanvasBoard.ts": 1,
+        "app/lib/canvas/persistence.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 5,
+      "user_lines_removed": 5,
+      "agent_lines_added": 794,
+      "agent_lines_removed": 17,
+      "user_added_per_file": {
+        "app/lib/canvas/types.ts": 3,
+        "app/lib/providers/gemini.ts": 2
+      },
+      "user_removed_per_file": {
+        "app/lib/providers/gemini.ts": 5
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 20,
+      "user_lines_removed": 14,
+      "agent_lines_added": 802,
+      "agent_lines_removed": 33,
+      "user_added_per_file": {
+        "app/components/workspace/nodes/CanvasCardNode.tsx": 12,
+        "app/lib/canvas/mock-content.ts": 3,
+        "app/lib/canvas/sample-data.ts": 3,
+        "app/lib/providers/gemini.ts": 2
+      },
+      "user_removed_per_file": {
+        "app/components/workspace/nodes/CanvasCardNode.tsx": 1,
+        "app/lib/canvas/mock-content.ts": 6,
+        "app/lib/canvas/sample-data.ts": 2,
+        "app/lib/providers/gemini.ts": 5
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 940,
+      "agent_lines_removed": 90
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 940,
+      "agent_lines_removed": 90
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1049,
+      "agent_lines_removed": 253
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1049,
+      "agent_lines_removed": 253
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1049,
+      "agent_lines_removed": 253
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1361,
+      "agent_lines_removed": 311
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1457,
+      "agent_lines_removed": 334
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1355,
+      "agent_lines_removed": 339
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1359,
+      "agent_lines_removed": 339
+    }
+  ]
+}
