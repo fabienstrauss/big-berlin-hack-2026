@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "79909c65e9ce",
+  "session_id": "019dc4ea-ac64-7310-af04-ebd129004436",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T15:23:14.916934Z",
+  "branch": "feature/video-pipeline",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "app/lib/server/video-jobs.ts",
+    "app/api/jobs/route.ts",
+    "README.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.3-codex",
+  "turn_id": "a570c2e01da1",
+  "checkpoint_transcript_start": 1760,
+  "transcript_lines_at_start": 1760,
+  "token_usage": {
+    "input_tokens": 157911,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1436288,
+    "output_tokens": 4409,
+    "api_call_count": 12
+  },
+  "session_metrics": {
+    "turn_count": 11
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T15:23:14.814464Z",
+    "agent_lines": 96,
+    "agent_removed": 19,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 96,
+    "total_lines_changed": 115,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
