@@ -1,0 +1,70 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "0b64adebc047",
+  "session_id": "019dc46a-bf83-7b11-a3c1-c1e69f9eeeee",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T13:35:35.856435Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    ".gitignore"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.3-codex",
+  "turn_id": "7f1657818c01",
+  "token_usage": {
+    "input_tokens": 131451,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1687808,
+    "output_tokens": 19640,
+    "api_call_count": 53
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T13:35:35.842579Z",
+    "agent_lines": 76,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 76,
+    "total_lines_changed": 76,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 3615,
+      "user_lines_removed": 0,
+      "agent_lines_added": 5439,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".agents/skills/tavily-best-practices/SKILL.md": 144,
+        ".agents/skills/tavily-best-practices/references/crawl.md": 357,
+        ".agents/skills/tavily-best-practices/references/extract.md": 249,
+        ".agents/skills/tavily-best-practices/references/integrations.md": 717,
+        ".agents/skills/tavily-best-practices/references/research.md": 315,
+        ".agents/skills/tavily-best-practices/references/sdk.md": 397,
+        ".agents/skills/tavily-best-practices/references/search.md": 403,
+        ".agents/skills/tavily-cli/SKILL.md": 76,
+        ".agents/skills/tavily-crawl/SKILL.md": 100,
+        ".agents/skills/tavily-dynamic-search/SKILL.md": 457,
+        ".agents/skills/tavily-extract/SKILL.md": 80,
+        ".agents/skills/tavily-map/SKILL.md": 84,
+        ".agents/skills/tavily-research/SKILL.md": 100,
+        ".agents/skills/tavily-search/SKILL.md": 91,
+        "skills-lock.json": 45
+      }
+    }
+  ]
+}

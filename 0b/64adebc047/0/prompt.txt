@@ -1,0 +1,53 @@
+[@remotion](plugin://remotion@openai-curated) Create an animated cat video
+
+---
+
+can you make a sample cat video. and please ensure you don't commit to main branch
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+## Sample Animated Cat Video Plan (Remotion, No Main-Branch Commits)
+
+### Summary
+Create a small Remotion project in this repo that renders a playable sample cat animation as an MP4.  
+Use the chosen defaults: playful cartoon style, 8 seconds, silent, 1080p landscape (30fps).  
+Git safety: make local file changes only, with **no staging and no commits**.
+
+### Implementation Changes
+- Scaffold a blank Remotion app in a subfolder (for example `cat-video/`) using the Remotion-recommended bootstrap command.
+- Add one composition (e.g., `CatSample`) with:
+  - 1920x1080, 30fps, 240 frames (8 seconds).
+  - A simple animated cartoon cat scene (face/body/tail/ears via React/CSS shapes), plus lightweight motion (bounce, blink, tail sway, subtle background movement).
+  - No audio tracks.
+- Register the composition in the Remotion root entry so it appears in Studio and CLI rendering.
+- Add a dedicated render command (for example `npm run render:cat`) that outputs an MP4 to a predictable path like `cat-video/out/cat-sample.mp4`.
+- Keep edits isolated to the new Remotion project files; do not touch unrelated repo state.
+
+### Public Interfaces / Contract
+- New composition ID: `CatSample` (stable CLI target for rendering).
+- New npm script(s) for preview/render (for example `studio`, `render:cat`).
+- Output artifact path contract: `cat-video/out/cat-sample.mp4`.
+
+### Test Plan
+- Dependency and compile sanity:
+  - Install dependencies and ensure the project starts.
+  - Run a one-frame still render for a quick visual sanity check.
+- Render validation:
+  - Render full MP4 for `CatSample`.
+  - Verify file exists, is non-empty, and reports expected metadata (1920x1080, ~8s, 30fps).
+- Manual acceptance:
+  - Confirm animation has visible cat motion (blink/tail/body bounce) and no runtime errors.
+
+### Assumptions and Defaults
+- You want local implementation only and will decide later whether to commit.
+- I will not run `git add`, `git commit`, or push anything.
+- This satisfies “don’t commit to main branch” by making zero commits.
+
+---
+
+can you please check the code base again I see there are lot of changes that happened can zou let me knw what was done
+
+---
+
+can you add all this files to git ignore.
