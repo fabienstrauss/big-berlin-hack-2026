@@ -39,6 +39,50 @@ type OperationEnvelope = {
 
 const GENERATION_JOBS_TABLE = 'generation_jobs';
 
+function extractProviderErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    const raw = error.message?.trim();
+
+    if (!raw) {
+      return 'Unknown provider error';
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as {
+        error?: {
+          message?: string;
+          status?: string;
+          details?: Array<{
+            links?: Array<{
+              url?: string;
+            }>;
+          }>;
+        };
+      };
+
+      if (parsed.error?.message) {
+        const statusPrefix = parsed.error.status ? `[${parsed.error.status}] ` : '';
+        const activationUrl = parsed.error.details
+          ?.flatMap((detail) => detail.links ?? [])
+          .find((link) => Boolean(link.url))
+          ?.url;
+
+        if (activationUrl) {
+          return `${statusPrefix}${parsed.error.message} Activate API: ${activationUrl}`;
+        }
+
+        return `${statusPrefix}${parsed.error.message}`;
+      }
+    } catch {
+      // Keep original message if it is not JSON payload.
+    }
+
+    return raw;
+  }
+
+  return 'Unknown provider error';
+}
+
 function toJobResponse(row: GenerationJobRow): GenerationJobResponse {
   return {
     jobId: row.id,
@@ -139,17 +183,6 @@ export async function createVideoGenerationJob(
     throw new Error('Asynchronous jobs currently support only video generation.');
   }
 
-  const { composedPrompt, narrationScript } = await buildVideoPrompt(input);
-  const start = await startVideoGenerationWithVertex(composedPrompt, {
-    model: input.modelOverrides?.vertexVideoModel,
-    durationSeconds: input.modelOverrides?.vertexVideoDurationSeconds,
-  });
-
-  const operationEnvelope: OperationEnvelope = {
-    model: start.model,
-    operation: start.operation,
-  };
-
   const id = randomUUID();
   const client = getSupabaseOrThrow();
 
@@ -160,10 +193,8 @@ export async function createVideoGenerationJob(
     type: 'video',
     request_payload: {
       input,
-      composedPrompt,
-      narrationScript,
     },
-    operation_payload: operationEnvelope,
+    operation_payload: null,
     artifact_path: null,
     artifact_url: null,
     warning: null,
@@ -174,10 +205,45 @@ export async function createVideoGenerationJob(
     throw new Error(error.message);
   }
 
-  return {
-    jobId: id,
-    status: 'queued',
-  };
+  try {
+    const { composedPrompt, narrationScript } = await buildVideoPrompt(input);
+    const start = await startVideoGenerationWithVertex(composedPrompt, {
+      model: input.modelOverrides?.vertexVideoModel,
+      durationSeconds: input.modelOverrides?.vertexVideoDurationSeconds,
+    });
+
+    const operationEnvelope: OperationEnvelope = {
+      model: start.model,
+      operation: start.operation,
+    };
+
+    const updatedRow = await updateJobRow(id, {
+      status: 'queued',
+      request_payload: {
+        input,
+        composedPrompt,
+        narrationScript,
+      },
+      operation_payload: operationEnvelope,
+      warning: null,
+      error: null,
+    });
+
+    return {
+      jobId: id,
+      status: updatedRow.status,
+    };
+  } catch (providerError) {
+    const failedRow = await updateJobRow(id, {
+      status: 'failed',
+      error: extractProviderErrorMessage(providerError),
+    });
+
+    return {
+      jobId: id,
+      status: failedRow.status,
+    };
+  }
 }
 
 export async function getVideoGenerationJob(jobId: string): Promise<GenerationJobResponse> {

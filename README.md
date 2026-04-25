@@ -87,6 +87,15 @@ Optional browser auto-open:
 OPEN_VIDEO=1 npm run jobs:smoke
 ```
 
+## Troubleshooting
+
+- `/api/jobs` returns `Supabase admin client is not configured`:
+  - Set `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (anon/publishable keys are not enough for server-side job writes).
+- Job row is created but quickly moves to `failed` with `SERVICE_DISABLED`:
+  - Enable Gemini API in the Google project tied to your API key:
+    - [Enable Gemini API](https://console.developers.google.com/apis/api/generativelanguage.googleapis.com/overview)
+  - Wait a few minutes for propagation and retry.
+
 ## Playwright E2E validation
 
 Install browser runtime once:
