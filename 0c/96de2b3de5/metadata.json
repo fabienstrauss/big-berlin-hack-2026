@@ -3,10 +3,16 @@
   "checkpoint_id": "0c96de2b3de5",
   "strategy": "manual-commit",
   "branch": "feat/generating-content",
-  "checkpoints_count": 0,
+  "checkpoints_count": 22,
   "files_touched": [
+    "app/components/workspace/ChoiceScreen.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
     "app/components/workspace/nodes/CanvasCardNode.tsx",
     "app/globals.css",
+    "app/lib/campaign/types.ts",
+    "app/lib/context/merge-context.ts",
+    "app/lib/context/workspace-context.ts",
+    "app/lib/supabase/constants.ts",
     "app/lib/templates/catalog.ts"
   ],
   "sessions": [
@@ -15,6 +21,12 @@
       "transcript": "/0c/96de2b3de5/0/full.jsonl",
       "content_hash": "/0c/96de2b3de5/0/content_hash.txt",
       "prompt": "/0c/96de2b3de5/0/prompt.txt"
+    },
+    {
+      "metadata": "/0c/96de2b3de5/1/metadata.json",
+      "transcript": "/0c/96de2b3de5/1/full.jsonl",
+      "content_hash": "/0c/96de2b3de5/1/content_hash.txt",
+      "prompt": "/0c/96de2b3de5/1/prompt.txt"
     }
   ]
 }

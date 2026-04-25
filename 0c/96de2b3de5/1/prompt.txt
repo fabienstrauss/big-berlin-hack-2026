@@ -1,0 +1,103 @@
+have a look at the generations page. for the images and videos displayed there i want a button to download seperatly.
+
+---
+
+can you make so i can see the videos and images when clicking on it in full res and format. thinking of some kind of lightbox thing. also now when we reload it will remove from ui all existing ones and generate news ones but old ones are still there. old ones should be still there but dont wipe them from view, leave them and have just the new ones added then
+
+---
+
+on the choices page we dont need the animation option since we dont use it, remove please
+
+---
+
+no on the canvas we still want the hera even though it might not work right now
+
+---
+
+how complex would it be to have more than one canvas?
+
+---
+
+ok lets maybe not add that complexity since its only for a hackathon. what i want is that for image gen it is actually using the reference image as reference. i think it is not doing so right now, correct?
+
+---
+
+the download buttons are z level higher than the context inspector. please fix
+
+---
+
+in the final prompt for generating the content can we have some kind of weights? currently i feel like it is applying to specific information from the content. also with text its weird it seems it applies buzz words to generating the content. which often is not needed. how would you refine this whole generation to refine it a bit more? what i also would want to be able to regenerate each generated content individually by reuplaoding to nanobanana/veo with the file itself and a refining prompt.
+
+---
+
+what did you change  POST /api/context/pack 200 in 503ms (next.js: 4ms, application-code: 499ms)
+[generate] Starting image generation for instagram
+[generate] → Gemini image request (gemini-3-pro-image-preview, 9:16)
+[generate] ← Gemini image response: 200
+[generate] Image received (image/jpeg), uploading to storage…
+[generate] Uploading image to storage…
+[generate] Saving record to DB…
+⨯ ReferenceError: NextResponse is not defined
+    at POST (app/api/campaign/generate/route.ts:64:5)
+  62 |     return NextResponse.json(result);
+  63 |   } catch (error) {
+> 64 |     return NextResponse.json(
+     |     ^
+  65 |       { error: error instanceof Error ? error.message : 'Generation failed' },
+  66 |       { status: 500 },
+  67 |     );
+ POST /api/campaign/generate 500 in 21.4s (next.js: 3ms, application-code: 21.4s)
+
+ so that that error occurse??
+
+---
+
+explain to me how you implement the weighing?
+
+---
+
+cool what i think would be benefitial as well for images on the choice page to not only use a template but also uplaod a reference photo for consistency. for example uplaod a pic of my product so it can generate the image where our product is actually in. then for the refining step have it that the text editor opens in a way that the complete row does expand because of the refining, maybe have it move over the image, you know what i mean?
+
+---
+
+getting weird error when trying to generate new content. btw refining works perfectly. i get this error: choiceConfigArtifact is not defined
+
+---
+
+on reload the refined image is gone and the old one is there. why that?
+
+---
+
+ok now generating new works but not refining.
+
+---
+
+ok and also find a better way for the button because we are not actually regenerate all
+
+---
+
+has the wipe all a safety check like ask for conformation?
+
+---
+
+and for the video gen is it actually referencing our given video?
+
+---
+
+maybe make the clear all just wipe from ui but not actual bucket?
+
+---
+
+for the choice of image let us also add options for format like with video.
+
+---
+
+can you have a look in the image gen if we really use the aspect ratio selected? because i choosed 1:1 but still got 9:16
+
+---
+
+For two of the template videos i actually have the prompt, maybe you can add in the catalog?? see yourself: first is the tutorial thing. edit the prompt so it is clean because i scraped from random website @product:51fd4d9a-d907-450f-8886-4b5f82fadb09 Authentic amateur-style UGC in a bright bathroom: white tiles, soft natural daylight from a window, real-life details (folded towel, small plant, simple ceramics). Handheld feel with subtle micro-shake, natural smartphone-lens look, no cinematic grading. Feels like a real girl filming a quick clip for friends. The phone, camera, and any mirror reflection of a phone or hands holding a phone must never be visible. No mirrors showing the filming setup at all — if a mirror appears, it only shows her face and the room, never a device. 0–2s — Visual hook: Extreme close-up of the girl's face, slightly off-center, lit by soft window light. She leans in fast with wide surprised eyes and a half-smile, like she just noticed something amazing on her skin. Natural ambient sound: faint water drip + her soft excited "okay wait—". Tiny handheld wobble. No on-screen text. 2–4s: Quick cut — her hand brings [PRODUCT] up next to her cheek, turning it once so the label catches the light. She says in casual upbeat American English: "I literally cannot believe how good this is." 4–7s: Tight close-up of her hands applying [PRODUCT] to her skin — real texture, real motion, product visibly going on. Soft bathroom room tone. Voiceover: "Look how it just melts in — my skin already feels insane." 7–10s: Medium shot of her face and shoulders, soft daylight, she touches the area where she applied it and turns her face gently side to side in the light to show the glow. Small natural giggle. Says: "Okay, I'm obsessed. I'm not going back." 10–12s: Final close-up: both hands hold [PRODUCT] up near her face, she gives a small playful shrug and a genuine smile, clip ends mid-motion like a real social post. Audio: Only her voice + natural bathroom room tone (faint water, soft tile echo). No music, no sound effects, no narrator. Voice: warm, friendly, mid-20s American accent, conversational, natural breaths and pauses, pe
+
+---
+
+this is for the hyper motion: chocolate japanese style commercial, with chocolate crunching, pieces breaking, hands passing chocolate to each other, japanese happy people smiling while biting, and these little characters animated maybe expand prompt lol

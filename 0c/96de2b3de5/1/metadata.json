@@ -1,0 +1,372 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "0c96de2b3de5",
+  "session_id": "1f9159fd-945c-4e79-a037-e1afa5c9e179",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T21:14:19.632004Z",
+  "branch": "feat/generating-content",
+  "checkpoints_count": 22,
+  "files_touched": [
+    "app/components/workspace/ChoiceScreen.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/components/workspace/nodes/CanvasCardNode.tsx",
+    "app/globals.css",
+    "app/lib/campaign/types.ts",
+    "app/lib/context/merge-context.ts",
+    "app/lib/context/workspace-context.ts",
+    "app/lib/supabase/constants.ts",
+    "app/lib/templates/catalog.ts"
+  ],
+  "agent": "Gemini CLI",
+  "model": "gemini-3-flash-preview",
+  "turn_id": "5bf721b6d087",
+  "session_metrics": {
+    "turn_count": 22
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T21:14:19.425854Z",
+    "agent_lines": 0,
+    "agent_removed": 92,
+    "human_added": 1262,
+    "human_modified": 589,
+    "human_removed": 0,
+    "total_committed": 1705,
+    "total_lines_changed": 1943,
+    "agent_percentage": 4.734945959855893,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1117,
+      "user_lines_removed": 135,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 7,
+        ".idea/misc.xml": 1,
+        "app/api/campaign/generate/route.ts": 82,
+        "app/components/workspace/WorkspaceCanvas.tsx": 401,
+        "app/globals.css": 46,
+        "app/lib/campaign/generate.ts": 255,
+        "app/lib/campaign/prompt-builder.ts": 102,
+        "app/lib/campaign/types.ts": 15,
+        "app/lib/supabase/constants.ts": 4,
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1,
+        "supabase/schema.sql": 187
+      },
+      "user_removed_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 6,
+        ".idea/misc.xml": 1,
+        "app/components/workspace/WorkspaceCanvas.tsx": 128
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1223,
+      "agent_lines_removed": 151
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1285,
+      "agent_lines_removed": 151
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1290,
+      "agent_lines_removed": 177
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1288,
+      "agent_lines_removed": 156
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1288,
+      "agent_lines_removed": 156
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 55,
+      "user_lines_removed": 4,
+      "agent_lines_added": 1288,
+      "agent_lines_removed": 156,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 1,
+        "app/lib/campaign/generate.ts": 44,
+        "app/lib/campaign/prompt-builder.ts": 10
+      },
+      "user_removed_per_file": {
+        "app/lib/campaign/generate.ts": 2,
+        "app/lib/campaign/prompt-builder.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 55,
+      "user_lines_removed": 4,
+      "agent_lines_added": 1288,
+      "agent_lines_removed": 156,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 1,
+        "app/lib/campaign/generate.ts": 44,
+        "app/lib/campaign/prompt-builder.ts": 10
+      },
+      "user_removed_per_file": {
+        "app/lib/campaign/generate.ts": 2,
+        "app/lib/campaign/prompt-builder.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 89,
+      "user_lines_removed": 25,
+      "agent_lines_added": 1374,
+      "agent_lines_removed": 156,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 10,
+        "app/lib/campaign/generate.ts": 42,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 4,
+        "app/lib/campaign/generate.ts": 2,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 89,
+      "user_lines_removed": 23,
+      "agent_lines_added": 1374,
+      "agent_lines_removed": 156,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 10,
+        "app/lib/campaign/generate.ts": 42,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 2,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 89,
+      "user_lines_removed": 23,
+      "agent_lines_added": 1374,
+      "agent_lines_removed": 156,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 10,
+        "app/lib/campaign/generate.ts": 42,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 2,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 100,
+      "user_lines_removed": 24,
+      "agent_lines_added": 1473,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 11,
+        "app/lib/campaign/generate.ts": 52,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 3,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 100,
+      "user_lines_removed": 24,
+      "agent_lines_added": 1473,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 11,
+        "app/lib/campaign/generate.ts": 52,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 3,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 14,
+      "user_lines_added": 122,
+      "user_lines_removed": 36,
+      "agent_lines_added": 1474,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 72,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 15,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 15,
+      "user_lines_added": 124,
+      "user_lines_removed": 36,
+      "agent_lines_added": 1474,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 74,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 15,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 16,
+      "user_lines_added": 124,
+      "user_lines_removed": 36,
+      "agent_lines_added": 1503,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 74,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 15,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 17,
+      "user_lines_added": 124,
+      "user_lines_removed": 36,
+      "agent_lines_added": 1503,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 74,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 15,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 18,
+      "user_lines_added": 156,
+      "user_lines_removed": 38,
+      "agent_lines_added": 1503,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 106,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 17,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 19,
+      "user_lines_added": 156,
+      "user_lines_removed": 38,
+      "agent_lines_added": 1505,
+      "agent_lines_removed": 169,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 106,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 17,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 20,
+      "user_lines_added": 156,
+      "user_lines_removed": 38,
+      "agent_lines_added": 1544,
+      "agent_lines_removed": 211,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 106,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 17,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 21,
+      "user_lines_added": 156,
+      "user_lines_removed": 38,
+      "agent_lines_added": 1544,
+      "agent_lines_removed": 211,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 106,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 17,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    },
+    {
+      "checkpoint_number": 22,
+      "user_lines_added": 156,
+      "user_lines_removed": 38,
+      "agent_lines_added": 1552,
+      "agent_lines_removed": 219,
+      "user_added_per_file": {
+        "app/api/campaign/generate/route.ts": 13,
+        "app/lib/campaign/generate.ts": 106,
+        "app/lib/campaign/prompt-builder.ts": 37
+      },
+      "user_removed_per_file": {
+        "app/api/campaign/generate/route.ts": 2,
+        "app/lib/campaign/generate.ts": 17,
+        "app/lib/campaign/prompt-builder.ts": 19
+      }
+    }
+  ]
+}
