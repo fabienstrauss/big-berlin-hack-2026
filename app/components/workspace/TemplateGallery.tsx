@@ -2,6 +2,7 @@
 
 import { Plus } from 'lucide-react';
 import { ContentTemplate } from '../../lib/templates/catalog';
+import { getTemplateAssetUrl } from '../../lib/templates/assets';
 
 type TemplateGalleryProps = {
   templates: ContentTemplate[];
@@ -57,14 +58,14 @@ function TemplateCard({
     >
       <div className="relative w-full overflow-hidden bg-slate-50">
         {referenceAsset?.type === 'image' ? (
-          <img 
-            src={referenceAsset.src} 
+          <img
+            src={getTemplateAssetUrl(referenceAsset.src)}
             alt={template.title}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
         ) : referenceAsset?.type === 'video' ? (
-          <video 
-            src={referenceAsset.src} 
+          <video
+            src={getTemplateAssetUrl(referenceAsset.src)}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
             autoPlay
             muted

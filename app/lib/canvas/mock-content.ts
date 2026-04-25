@@ -5,6 +5,7 @@ import type {
   TemplateInput,
 } from './contracts';
 import { contentTemplates } from '../templates/catalog';
+import { getTemplateAssetUrl } from '../templates/assets';
 
 function createPreviewDataUrl(title: string, eyebrow: string, from: string, to: string) {
   const svg = `
@@ -179,18 +180,13 @@ export function createMockTemplatePayload(
           subtitle: template.vibe,
           accent: 'from-indigo-100 via-white to-sky-50',
           templateId: template.id,
-          body: template.description,
-          bullets: template.hooks,
-          imagePrompt: template.imagePrompt,
-          videoPrompt: template.videoPrompt,
-          animationPrompt: template.animationPrompt,
           hideAssetMeta: true,
           assetItems: template.assets?.map((asset, index) => ({
             id: `${template.id}-asset-${index}`,
             label: asset.label,
             type: asset.type,
             meta: '',
-            previewUrl: asset.src,
+            previewUrl: getTemplateAssetUrl(asset.src),
           })),
         },
       },

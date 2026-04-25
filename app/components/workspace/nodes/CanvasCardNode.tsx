@@ -99,6 +99,56 @@ function PromptCard({
 }
 
 export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
+  // Template nodes: media-only card, no text content
+  if (data.kind === 'template') {
+    const asset = data.assetItems?.[0];
+    return (
+      <div
+        className={[
+          'relative w-72 overflow-hidden rounded-3xl border border-slate-200/80 shadow-[0_18px_50px_-30px_rgba(15,23,42,0.35)] transition-all duration-200 bg-slate-900',
+          selected ? 'scale-[1.01] border-slate-400 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.55)]' : '',
+        ].join(' ')}
+      >
+        {/* Delete */}
+        <button
+          type="button"
+          onClick={data.onDelete}
+          className="nodrag absolute right-3 top-3 z-10 flex size-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
+        >
+          <Trash2 className="size-4" />
+        </button>
+
+        {/* Media */}
+        {asset?.type === 'image' && asset.previewUrl ? (
+          <img
+            src={asset.previewUrl}
+            alt={data.title}
+            className="w-full object-cover"
+          />
+        ) : asset?.type === 'video' && asset.previewUrl ? (
+          <video
+            src={asset.previewUrl}
+            className="w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        ) : (
+          <div className="flex h-48 w-full items-center justify-center bg-slate-800">
+            <NotebookPen className="size-8 text-slate-500" />
+          </div>
+        )}
+
+        {/* Title overlay */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-4 pb-4 pt-10">
+          <p className="text-sm font-bold text-white leading-tight">{data.title}</p>
+          <p className="mt-0.5 text-xs text-white/50">{data.subtitle}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={[
@@ -170,25 +220,21 @@ export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
           icon={<Sparkles className="size-3.5" />}
           prompt={data.prompt}
         />
-        {data.kind !== 'template' && (
-          <>
-            <PromptCard
-              title="Image Prompt"
-              icon={<ImageIcon className="size-3.5" />}
-              prompt={data.imagePrompt}
-            />
-            <PromptCard
-              title="Video Prompt"
-              icon={<Video className="size-3.5" />}
-              prompt={data.videoPrompt}
-            />
-            <PromptCard
-              title="Animation Prompt"
-              icon={<Sparkles className="size-3.5" />}
-              prompt={data.animationPrompt}
-            />
-          </>
-        )}
+        <PromptCard
+          title="Image Prompt"
+          icon={<ImageIcon className="size-3.5" />}
+          prompt={data.imagePrompt}
+        />
+        <PromptCard
+          title="Video Prompt"
+          icon={<Video className="size-3.5" />}
+          prompt={data.videoPrompt}
+        />
+        <PromptCard
+          title="Animation Prompt"
+          icon={<Sparkles className="size-3.5" />}
+          prompt={data.animationPrompt}
+        />
 
         {data.kind === 'generation' && data.status === 'generating' ? (
           <div className="rounded-2xl border border-white/80 bg-white/80 p-4 backdrop-blur-sm">

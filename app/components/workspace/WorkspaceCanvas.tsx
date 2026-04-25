@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { ImageIcon, Sparkles, Video } from 'lucide-react';
+import { Globe, ImageIcon, Library, Paperclip, Plus, Sparkles, Video } from 'lucide-react';
 import {
   Background,
   BackgroundVariant,
@@ -11,10 +11,12 @@ import {
 } from 'reactflow';
 
 import { useCanvasBoard } from '../../hooks/useCanvasBoard';
+import { useChoiceConfig } from '../../hooks/useChoiceConfig';
 import { FloatingToolbar } from './FloatingToolbar';
 import { TopNavigation } from './TopNavigation';
 import { WorkspaceActionPanel } from './WorkspaceActionPanel';
 import { TemplateGallery } from './TemplateGallery';
+import { ChoiceScreen } from './ChoiceScreen';
 import { CanvasCardNode } from './nodes/CanvasCardNode';
 import { contentTemplates } from '../../lib/templates/catalog';
 
@@ -78,6 +80,7 @@ export function WorkspaceCanvas() {
   const [audioFormat, setAudioFormat] = useState<'wav' | 'opus' | 'pcm'>('wav');
   const [searchQuery, setSearchQuery] = useState('');
   const [includeImages, setIncludeImages] = useState(true);
+  const { config: persistedChoiceConfig, updateConfig: persistChoiceConfig } = useChoiceConfig();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const generateBrandInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -94,6 +97,19 @@ export function WorkspaceCanvas() {
   };
 
   const handlePaneClick = useCallback(() => setActivePanel(null), []);
+
+  const brainstormActions = [
+    { testId: 'toolbar-add-note', label: 'Add note', icon: Plus, onClick: actions.addQuickNote, primary: true },
+    { testId: 'toolbar-open-upload', label: 'Own content', icon: Paperclip, onClick: () => setActivePanel('upload') },
+    { testId: 'toolbar-open-generate', label: 'Generate', icon: Sparkles, onClick: () => setActivePanel('generate') },
+    { testId: 'toolbar-open-scrape', label: 'Tavily scrape', icon: Globe, onClick: () => setActivePanel('scrape') },
+    { testId: 'toolbar-open-template', label: 'Templates', icon: Library, onClick: () => setActivePanel('template') },
+  ];
+
+  const choiceActions = [
+    { testId: 'toolbar-choice-ai-assistant', label: 'AI Assistant', icon: Sparkles, onClick: () => {}, primary: true },
+    { testId: 'toolbar-choice-saved-presets', label: 'Saved Presets', icon: Library, onClick: () => {} },
+  ];
 
   const handleUploadSubmit = async () => {
     if (!selectedFiles.length) {
@@ -225,47 +241,89 @@ export function WorkspaceCanvas() {
         onStepClick={setCurrentStep}
       />
 
-      <main className="h-full pt-24">
-        {isCanvasReady ? (
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onPaneClick={handlePaneClick}
-            deleteKeyCode={['Backspace', 'Delete']}
-            noWheelClassName="nowheel"
-            fitView
-            fitViewOptions={{ padding: 0.2 }}
-            proOptions={{ hideAttribution: true }}
-            className="!bg-transparent"
-          >
-            <Background
-              variant={BackgroundVariant.Dots}
-              gap={20}
-              size={1.2}
-              color="#cbd5e1"
-            />
-            <Controls
-              position="top-right"
-              className="!top-4 !right-4 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
-            />
-            <MiniMap
-              pannable
-              zoomable
-              nodeColor={() => '#e2e8f0'}
-              className="!bottom-24 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
-            />
-          </ReactFlow>
-        ) : (
+      <main className="relative h-full overflow-hidden">
+        {/* Step 1: Brainstorming (ReactFlow) */}
+        <div
+          className={[
+            'absolute inset-0 pt-24 transition-all duration-500 ease-in-out',
+            currentStep === 1 ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0 pointer-events-none',
+          ].join(' ')}
+        >
+          {isCanvasReady ? (
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onPaneClick={handlePaneClick}
+              deleteKeyCode={['Backspace', 'Delete']}
+              noWheelClassName="nowheel"
+              fitView
+              fitViewOptions={{ padding: 0.2 }}
+              proOptions={{ hideAttribution: true }}
+              className="!bg-transparent"
+            >
+              <Background
+                variant={BackgroundVariant.Dots}
+                gap={20}
+                size={1.2}
+                color="#cbd5e1"
+              />
+              <Controls
+                position="top-right"
+                className="!top-4 !right-4 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
+              />
+              <MiniMap
+                pannable
+                zoomable
+                nodeColor={() => '#e2e8f0'}
+                className="!bottom-24 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
+              />
+            </ReactFlow>
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <div className="flex items-center gap-3 rounded-full border border-white/70 bg-white/85 px-5 py-3 text-sm font-medium text-slate-600 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+                <span className="size-3 animate-pulse rounded-full bg-slate-400" />
+                Loading your canvas...
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Step 2: Choice */}
+        <div
+          className={[
+            'absolute inset-0 pt-24 transition-all duration-500 ease-in-out overflow-y-auto',
+            currentStep === 2 ? 'translate-x-0 opacity-100' : (currentStep < 2 ? 'translate-x-full opacity-0' : '-translate-x-full opacity-0'),
+            currentStep !== 2 ? 'pointer-events-none' : ''
+          ].join(' ')}
+        >
+          <ChoiceScreen
+            key={persistedChoiceConfig ? 'choice-config-hydrated' : 'choice-config-empty'}
+            initialConfig={persistedChoiceConfig}
+            onConfigChange={persistChoiceConfig}
+            onComplete={(config) => {
+              persistChoiceConfig(config);
+              setCurrentStep(3);
+            }}
+          />
+        </div>
+
+        {/* Step 3: Generating (Empty) */}
+        <div
+          className={[
+            'absolute inset-0 pt-24 transition-all duration-500 ease-in-out',
+            currentStep === 3 ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none',
+          ].join(' ')}
+        >
           <div className="flex h-full items-center justify-center">
-            <div className="flex items-center gap-3 rounded-full border border-white/70 bg-white/85 px-5 py-3 text-sm font-medium text-slate-600 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
-              <span className="size-3 animate-pulse rounded-full bg-slate-400" />
-              Loading your canvas...
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-slate-300">Generating View</h2>
+              <p className="text-slate-400">Content coming soon...</p>
             </div>
           </div>
-        )}
+        </div>
       </main>
 
       {activePanel === 'upload' ? (
@@ -608,11 +666,8 @@ export function WorkspaceCanvas() {
       ) : null}
 
       <FloatingToolbar
-        onAddNote={actions.addQuickNote}
-        onOpenUpload={() => setActivePanel('upload')}
-        onOpenGenerate={() => setActivePanel('generate')}
-        onOpenScrape={() => setActivePanel('scrape')}
-        onOpenTemplate={() => setActivePanel('template')}
+        currentStep={currentStep}
+        actions={currentStep === 1 ? brainstormActions : choiceActions}
       />
     </div>
   );
