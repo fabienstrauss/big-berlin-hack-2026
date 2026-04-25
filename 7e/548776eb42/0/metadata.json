@@ -1,0 +1,199 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "7e548776eb42",
+  "session_id": "019dc4ea-ac64-7310-af04-ebd129004436",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T15:19:41.03571Z",
+  "branch": "feature/video-pipeline",
+  "checkpoints_count": 5,
+  "files_touched": [
+    ".gitignore",
+    "README.md",
+    "app/api/generate/route.ts",
+    "app/api/search/route.ts",
+    "app/components/workspace/FloatingToolbar.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/components/workspace/nodes/CanvasCardNode.tsx",
+    "app/hooks/useCanvasBoard.ts",
+    "app/lib/canvas/contracts.ts",
+    "app/lib/canvas/sample-data.ts",
+    "app/lib/canvas/types.ts",
+    "app/lib/server/providers/vertex.ts",
+    "docs/adc-cloud-run.md",
+    "package-lock.json",
+    "package.json"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.3-codex",
+  "turn_id": "be3e049435a5",
+  "token_usage": {
+    "input_tokens": 764380,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 26497536,
+    "output_tokens": 133498,
+    "api_call_count": 253
+  },
+  "session_metrics": {
+    "turn_count": 10
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T15:19:40.909458Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 5283,
+    "human_modified": 245,
+    "human_removed": 0,
+    "total_committed": 5283,
+    "total_lines_changed": 5528,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 3765,
+      "user_lines_removed": 116,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "app/api/generate/route.ts": 21,
+        "app/api/search/route.ts": 21,
+        "app/components/workspace/WorkspaceCanvas.tsx": 553,
+        "app/components/workspace/nodes/CanvasCardNode.tsx": 279,
+        "app/hooks/useCanvasBoard.ts": 388,
+        "app/lib/canvas/contracts.ts": 51,
+        "app/lib/canvas/sample-data.ts": 164,
+        "app/lib/canvas/types.ts": 44,
+        "app/lib/server/pipeline.ts": 410,
+        "app/lib/server/providers/gradium.ts": 78,
+        "app/lib/server/providers/hera.ts": 98,
+        "app/lib/server/providers/tavily.ts": 99,
+        "app/lib/server/providers/vertex.ts": 390,
+        "docs/adc-cloud-run.md": 84,
+        "package-lock.json": 1080,
+        "package.json": 5
+      },
+      "user_removed_per_file": {
+        "package-lock.json": 115,
+        "package.json": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1860,
+      "agent_lines_removed": 125
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 981,
+      "user_lines_removed": 31,
+      "agent_lines_added": 1860,
+      "agent_lines_removed": 189,
+      "user_added_per_file": {
+        ".gitignore": 2,
+        "README.md": 92,
+        "app/components/workspace/FloatingToolbar.tsx": 92,
+        "app/components/workspace/WorkspaceCanvas.tsx": 18,
+        "app/lib/canvas/contracts.ts": 7,
+        "app/lib/server/pipeline.ts": 8,
+        "app/lib/server/providers/vertex.ts": 16,
+        "package-lock.json": 64,
+        "package.json": 5,
+        "playwright.config.ts": 43,
+        "tests/e2e/helpers.ts": 144,
+        "tests/e2e/pipeline.live.spec.ts": 247,
+        "tests/e2e/pipeline.mock.spec.ts": 243
+      },
+      "user_removed_per_file": {
+        "README.md": 20,
+        "app/components/workspace/WorkspaceCanvas.tsx": 3,
+        "app/lib/server/pipeline.ts": 2,
+        "app/lib/server/providers/vertex.ts": 5,
+        "package.json": 1
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 701,
+      "user_lines_removed": 7,
+      "agent_lines_added": 2082,
+      "agent_lines_removed": 155,
+      "user_added_per_file": {
+        "app/lib/server/pipeline.ts": 8,
+        "app/lib/server/providers/vertex.ts": 16,
+        "playwright.config.ts": 43,
+        "tests/e2e/helpers.ts": 144,
+        "tests/e2e/pipeline.live.spec.ts": 247,
+        "tests/e2e/pipeline.mock.spec.ts": 243
+      },
+      "user_removed_per_file": {
+        "app/lib/server/pipeline.ts": 2,
+        "app/lib/server/providers/vertex.ts": 5
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 701,
+      "user_lines_removed": 7,
+      "agent_lines_added": 2082,
+      "agent_lines_removed": 155,
+      "user_added_per_file": {
+        "app/lib/server/pipeline.ts": 8,
+        "app/lib/server/providers/vertex.ts": 16,
+        "playwright.config.ts": 43,
+        "tests/e2e/helpers.ts": 144,
+        "tests/e2e/pipeline.live.spec.ts": 247,
+        "tests/e2e/pipeline.mock.spec.ts": 243
+      },
+      "user_removed_per_file": {
+        "app/lib/server/pipeline.ts": 2,
+        "app/lib/server/providers/vertex.ts": 5
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 2243,
+      "user_lines_removed": 43,
+      "agent_lines_added": 2082,
+      "agent_lines_removed": 186,
+      "user_added_per_file": {
+        "README.md": 45,
+        "app/api/generate/route.ts": 7,
+        "app/api/jobs/[id]/route.ts": 33,
+        "app/api/jobs/route.ts": 22,
+        "app/lib/canvas/contracts.ts": 20,
+        "app/lib/server/gcs-video-storage.ts": 117,
+        "app/lib/server/pipeline.ts": 8,
+        "app/lib/server/providers/vertex.ts": 124,
+        "app/lib/server/supabase-admin.ts": 25,
+        "app/lib/server/video-jobs.ts": 253,
+        "docs/adc-cloud-run.md": 11,
+        "package-lock.json": 698,
+        "package.json": 3,
+        "playwright.config.ts": 43,
+        "scripts/jobs-smoke.mjs": 83,
+        "supabase/.temp/gotrue-version": 1,
+        "supabase/.temp/pooler-url": 1,
+        "supabase/.temp/postgres-version": 1,
+        "supabase/.temp/project-ref": 1,
+        "supabase/.temp/rest-version": 1,
+        "supabase/.temp/storage-migration": 1,
+        "supabase/.temp/storage-version": 1,
+        "supabase/migrations/20260425151036_add_generation_jobs_table.sql": 39,
+        "supabase/schema.sql": 71,
+        "tests/e2e/helpers.ts": 144,
+        "tests/e2e/pipeline.live.spec.ts": 247,
+        "tests/e2e/pipeline.mock.spec.ts": 243
+      },
+      "user_removed_per_file": {
+        "app/lib/server/pipeline.ts": 2,
+        "app/lib/server/providers/vertex.ts": 22,
+        "docs/adc-cloud-run.md": 2,
+        "package-lock.json": 16,
+        "package.json": 1
+      }
+    }
+  ]
+}
