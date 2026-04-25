@@ -1,0 +1,57 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "32c588b8d744",
+  "strategy": "manual-commit",
+  "branch": "feat/context-compression",
+  "checkpoints_count": 18,
+  "files_touched": [
+    "app/api/context/extract/route.ts",
+    "app/api/context/pack/route.ts",
+    "app/components/workspace/ChoiceScreen.tsx",
+    "app/components/workspace/FloatingToolbar.tsx",
+    "app/components/workspace/WorkspaceActionPanel.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/hooks/useCanvasBoard.ts",
+    "app/hooks/useChoiceConfig.ts",
+    "app/lib/campaign/persistence.ts",
+    "app/lib/campaign/types.ts",
+    "app/lib/canvas/mock-content.ts",
+    "app/lib/canvas/persistence.ts",
+    "app/lib/canvas/sample-data.ts",
+    "app/lib/canvas/types.ts",
+    "app/lib/context/context-pack-service.ts",
+    "app/lib/context/extraction-service.ts",
+    "app/lib/context/extractors/choice-config.ts",
+    "app/lib/context/extractors/document.ts",
+    "app/lib/context/extractors/image.ts",
+    "app/lib/context/extractors/index.ts",
+    "app/lib/context/extractors/text.ts",
+    "app/lib/context/extractors/video.ts",
+    "app/lib/context/fingerprint.ts",
+    "app/lib/context/merge-context.ts",
+    "app/lib/context/persistence.ts",
+    "app/lib/context/source-enumerator.ts",
+    "app/lib/context/types.ts",
+    "app/lib/context/workspace-context.ts",
+    "app/lib/providers/gemini-context.ts",
+    "app/lib/providers/gemini.ts",
+    "app/lib/providers/tavily.ts",
+    "app/lib/supabase/constants.ts",
+    "app/lib/supabase/server.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/32/c588b8d744/0/metadata.json",
+      "transcript": "/32/c588b8d744/0/full.jsonl",
+      "content_hash": "/32/c588b8d744/0/content_hash.txt",
+      "prompt": "/32/c588b8d744/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1503503,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 52363648,
+    "output_tokens": 208464,
+    "api_call_count": 469
+  }
+}
