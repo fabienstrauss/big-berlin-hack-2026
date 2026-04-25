@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "1330bd4b1171",
+  "session_id": "019dc57c-ac3b-73b3-94f3-56dce34cf77c",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T18:25:50.683959Z",
+  "branch": "feature/video-pipeline",
+  "checkpoints_count": 1,
+  "files_touched": [],
+  "agent": "Codex",
+  "model": "gpt-5.3-codex",
+  "turn_id": "a3085d1d328d",
+  "token_usage": {
+    "input_tokens": 901526,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 33131520,
+    "output_tokens": 127116,
+    "api_call_count": 359
+  },
+  "session_metrics": {
+    "turn_count": 20
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 971,
+      "user_lines_removed": 161,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".vscode/settings.json": 5,
+        "app/components/workspace/ChoiceScreen.tsx": 503,
+        "app/components/workspace/FloatingToolbar.tsx": 29,
+        "app/components/workspace/TemplateGallery.tsx": 5,
+        "app/components/workspace/WorkspaceCanvas.tsx": 99,
+        "app/components/workspace/nodes/CanvasCardNode.tsx": 65,
+        "app/hooks/useChoiceConfig.ts": 78,
+        "app/lib/campaign/persistence.ts": 42,
+        "app/lib/canvas/mock-content.ts": 2,
+        "app/lib/supabase/constants.ts": 4,
+        "app/lib/templates/assets.ts": 19,
+        "app/lib/templates/catalog.ts": 120
+      },
+      "user_removed_per_file": {
+        "app/components/workspace/FloatingToolbar.tsx": 15,
+        "app/components/workspace/TemplateGallery.tsx": 4,
+        "app/components/workspace/WorkspaceCanvas.tsx": 44,
+        "app/components/workspace/nodes/CanvasCardNode.tsx": 19,
+        "app/lib/canvas/mock-content.ts": 6,
+        "app/lib/templates/catalog.ts": 73
+      }
+    }
+  ]
+}
