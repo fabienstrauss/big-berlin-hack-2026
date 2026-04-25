@@ -1,0 +1,43 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "c0ddec45f482",
+  "strategy": "manual-commit",
+  "branch": "feat/llm-tooling",
+  "checkpoints_count": 8,
+  "files_touched": [
+    "app/api/generate/route.ts",
+    "app/api/search/route.ts",
+    "app/api/templates/apply/route.ts",
+    "app/components/workspace/TopNavigation.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/components/workspace/nodes/CanvasCardNode.tsx",
+    "app/hooks/useCanvasBoard.ts",
+    "app/lib/canvas/contracts.ts",
+    "app/lib/canvas/mock-content.ts",
+    "app/lib/canvas/persistence.ts",
+    "app/lib/canvas/sample-data.ts",
+    "app/lib/canvas/types.ts",
+    "app/lib/providers/env.ts",
+    "app/lib/providers/gemini.ts",
+    "app/lib/providers/openai.ts",
+    "app/lib/providers/tavily.ts",
+    "app/lib/supabase/constants.ts",
+    "app/lib/supabase/storage-server.ts",
+    "app/lib/templates/catalog.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/c0/ddec45f482/0/metadata.json",
+      "transcript": "/c0/ddec45f482/0/full.jsonl",
+      "content_hash": "/c0/ddec45f482/0/content_hash.txt",
+      "prompt": "/c0/ddec45f482/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 313508,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 18648064,
+    "output_tokens": 49858,
+    "api_call_count": 121
+  }
+}
