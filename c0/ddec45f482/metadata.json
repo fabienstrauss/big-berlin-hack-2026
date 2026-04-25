@@ -3,7 +3,7 @@
   "checkpoint_id": "c0ddec45f482",
   "strategy": "manual-commit",
   "branch": "feat/llm-tooling",
-  "checkpoints_count": 8,
+  "checkpoints_count": 9,
   "files_touched": [
     "app/api/generate/route.ts",
     "app/api/search/route.ts",
@@ -31,13 +31,19 @@
       "transcript": "/c0/ddec45f482/0/full.jsonl",
       "content_hash": "/c0/ddec45f482/0/content_hash.txt",
       "prompt": "/c0/ddec45f482/0/prompt.txt"
+    },
+    {
+      "metadata": "/c0/ddec45f482/1/metadata.json",
+      "transcript": "/c0/ddec45f482/1/full.jsonl",
+      "content_hash": "/c0/ddec45f482/1/content_hash.txt",
+      "prompt": "/c0/ddec45f482/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 313508,
+    "input_tokens": 1060840,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 18648064,
-    "output_tokens": 49858,
-    "api_call_count": 121
+    "cache_read_tokens": 31917312,
+    "output_tokens": 128847,
+    "api_call_count": 288
   }
 }
