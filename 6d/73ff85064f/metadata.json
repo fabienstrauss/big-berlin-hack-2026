@@ -1,0 +1,48 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "6d73ff85064f",
+  "strategy": "manual-commit",
+  "branch": "feature/video-pipeline",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "CLAUDE.md",
+    "app/api/templates/apply/route.ts",
+    "app/components/workspace/TemplateGallery.tsx",
+    "app/components/workspace/TopNavigation.tsx",
+    "app/components/workspace/WorkspaceActionPanel.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/components/workspace/nodes/CanvasCardNode.tsx",
+    "app/hooks/useCanvasBoard.ts",
+    "app/lib/canvas/contracts.ts",
+    "app/lib/canvas/mock-content.ts",
+    "app/lib/canvas/persistence.ts",
+    "app/lib/canvas/sample-data.ts",
+    "app/lib/canvas/types.ts",
+    "app/lib/providers/env.ts",
+    "app/lib/providers/gemini.ts",
+    "app/lib/providers/openai.ts",
+    "app/lib/providers/tavily.ts",
+    "app/lib/server/providers/vertex.ts",
+    "app/lib/server/video-jobs.ts",
+    "app/lib/supabase/client.ts",
+    "app/lib/supabase/constants.ts",
+    "app/lib/supabase/storage-server.ts",
+    "app/lib/templates/catalog.ts",
+    "playwright.config.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/6d/73ff85064f/0/metadata.json",
+      "transcript": "/6d/73ff85064f/0/full.jsonl",
+      "content_hash": "/6d/73ff85064f/0/content_hash.txt",
+      "prompt": "/6d/73ff85064f/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 244419,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 19905024,
+    "output_tokens": 58516,
+    "api_call_count": 156
+  }
+}
