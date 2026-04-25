@@ -1,0 +1,120 @@
+Act as an expert React developer. I am building a prototype for a hackathon and need a functional UI for a web app that helps users generate social media content. 
+
+Please write a comprehensive, single-file React component (e.g., App.jsx) based on the following specifications. Assume this will be dropped into a standard React + Vite + Tailwind CSS environment.
+
+**Tech Stack:**
+- React (with standard hooks like useState, useCallback)
+- Tailwind CSS for styling
+- Shadcn UI design principles (clean, minimalist, light mode only, subtle hover/active animations, soft borders/shadows)
+- Lucide React for icons
+- React Flow (reactflow) for the interactive canvas
+
+**1. Top Navigation Bar:**
+- A fixed header at the top.
+- Display three steps: "1. BRAINSTORMING", "2. CHOICE", and "3. GENERATING".
+- Style "1. BRAINSTORMING" as the active step (e.g., using a subtle Shadcn-style primary badge or highlighted text), and mute the others.
+
+**2. Main Interactive Canvas (React Flow):**
+- Use React Flow to create an interactive canvas taking up the full screen (minus the header).
+- Enable default React Flow features: panning, zooming, and the polka-dot background (`<Background variant="dots" />`).
+- Initialize the state with 3 default custom nodes (styled like clean, Shadcn-style cards with soft shadows and pastel or white backgrounds) containing mock social media brainstorming data.
+- Ensure users can drag these nodes around and draw connecting lines (edges) between them using React Flow's connection handlers.
+
+**3. Floating Taskbar (Bottom):**
+- Create a floating Shadcn-style toolbar centered at the bottom of the screen with a glassmorphism effect (bg-white/80, backdrop-blur, border, shadow-lg, rounded-full).
+- Include icon buttons (using Lucide icons) for: Add Note (+), Draw, Image, Search, and Settings.
+- Implement subtle scale/opacity animations on hover for these buttons.
+- **Functionality:** When the "Add Note (+)" button is clicked, it must dynamically add a new node to the React Flow canvas state so the user sees it appear immediately.
+
+Focus on a highly polished, professional "light mode" aesthetic. Provide the complete code for the component.
+
+---
+
+- No mono file for ui, split  components and logic layers
+- Make the canvas work and use sample date, the actual generation of things will be implemented later on
+
+
+- Button to add own content: images, videos, documents -> to be displayed on the canvas
+- Button to generate content: images with nanobanana, videos with veo and animations with Hera -> all by prompt
+- Button to scrape internet by using tool called Tavily -> creates special type of note with content displayed and even images of selected as option -> put all images as a stack onto canvas
+- Button to choose templates or sample product content with different style/vibe
+
+---
+
+you seem to be stuck?
+
+---
+
+ok now you are just adding notes with input. for adding own content i imagined uplaoding from my machine and it displays on canvas not a note itself. for generatign i expect a select where i select what i wanna create, give it a prompt and then the result will get displayed on the canvas. same for the tevily , tell it what i want to look for, tell it if i also want images, and then show the output on the canvas. then for the notes, make them editable as well...
+
+---
+
+ok for the cards remove the tags at the bottom. for file names too long trim the actual file name so it fits. for a note when content is too large and i want to scroll thorugh the content it zooms the cancas, fix this. fix the lines between objects, i cant remove lines, sometimes cant even create a line then it is stuck to my cursor. make the margins on hitting the button area to create a line bigger for better ux.
+
+---
+
+ok i now want to make the canvas persistant. i wanna use superbase. what do you need in order to do so?
+
+---
+
+just do single user, no user management and that. save nodes and edges, should look same when loaded again as before. files also should be stored. dont care about security for now. keep it simple first. first outline next steps.
+
+---
+
+/skills superbase
+
+---
+
+implemet outlined steps
+
+---
+
+added to .env
+
+---
+
+ok i added anon ke
+
+---
+
+ok i created public bucket called convas-assets
+
+---
+
+but it is there and its called canvas-assets
+
+---
+
+ok try again
+
+---
+
+there are still sync errros Failed to load resource: the server responded with a status of 404 ()
+useCanvasBoard.ts:139 
+ POST https://sxgpuibtssqicomzescn.supabase.co/rest/v1/canvas_state 404 (Not Found)
+setTimeout		
+(anonymous)	@	useCanvasBoard.ts:139
+
+---
+
+ok try again i run the script in superbase
+
+---
+
+ok i see that for uploaded files if the file name is too long it will overflow. please fix
+
+---
+
+[Image #1] look still not fixed
+
+---
+
+perfect. explain to me, how is placing content on the canvas handled right now? is it an api call? how should it work in future when we generate stuff, we need the whole thing to actually be able to place stuff, yk
+
+---
+
+do the thing you explained to me in last message
+
+---
+
+ok can i commit current state and on next branch we implement api layer for llm api calls???

@@ -1,0 +1,46 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "5e017f9b6160",
+  "strategy": "manual-commit",
+  "branch": "feat/ui-mvp",
+  "checkpoints_count": 20,
+  "files_touched": [
+    "app/api/generate/route.ts",
+    "app/api/search/route.ts",
+    "app/api/templates/apply/route.ts",
+    "app/components/workspace/FloatingToolbar.tsx",
+    "app/components/workspace/TopNavigation.tsx",
+    "app/components/workspace/WorkspaceActionPanel.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/components/workspace/WorkspaceScreen.tsx",
+    "app/components/workspace/nodes/CanvasCardNode.tsx",
+    "app/globals.css",
+    "app/hooks/useCanvasBoard.ts",
+    "app/layout.tsx",
+    "app/lib/canvas/contracts.ts",
+    "app/lib/canvas/mock-content.ts",
+    "app/lib/canvas/persistence.ts",
+    "app/lib/canvas/sample-data.ts",
+    "app/lib/canvas/types.ts",
+    "app/lib/supabase/client.ts",
+    "app/page.tsx",
+    "package-lock.json",
+    "package.json",
+    "supabase/schema.sql"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5e/017f9b6160/0/metadata.json",
+      "transcript": "/5e/017f9b6160/0/full.jsonl",
+      "content_hash": "/5e/017f9b6160/0/content_hash.txt",
+      "prompt": "/5e/017f9b6160/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 553680,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10020480,
+    "output_tokens": 67580,
+    "api_call_count": 144
+  }
+}

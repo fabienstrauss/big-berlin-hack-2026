@@ -1,0 +1,275 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "5e017f9b6160",
+  "session_id": "019dc469-1acd-7773-b399-e2e51a20eb1f",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T14:11:10.213654Z",
+  "branch": "feat/ui-mvp",
+  "checkpoints_count": 20,
+  "files_touched": [
+    "app/api/generate/route.ts",
+    "app/api/search/route.ts",
+    "app/api/templates/apply/route.ts",
+    "app/components/workspace/FloatingToolbar.tsx",
+    "app/components/workspace/TopNavigation.tsx",
+    "app/components/workspace/WorkspaceActionPanel.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/components/workspace/WorkspaceScreen.tsx",
+    "app/components/workspace/nodes/CanvasCardNode.tsx",
+    "app/globals.css",
+    "app/hooks/useCanvasBoard.ts",
+    "app/layout.tsx",
+    "app/lib/canvas/contracts.ts",
+    "app/lib/canvas/mock-content.ts",
+    "app/lib/canvas/persistence.ts",
+    "app/lib/canvas/sample-data.ts",
+    "app/lib/canvas/types.ts",
+    "app/lib/supabase/client.ts",
+    "app/page.tsx",
+    "package-lock.json",
+    "package.json",
+    "supabase/schema.sql"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.4",
+  "turn_id": "45a417e0b261",
+  "token_usage": {
+    "input_tokens": 553680,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10020480,
+    "output_tokens": 67580,
+    "api_call_count": 144
+  },
+  "session_metrics": {
+    "turn_count": 20
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T14:11:10.172502Z",
+    "agent_lines": 2235,
+    "agent_removed": 0,
+    "human_added": 27,
+    "human_modified": 321,
+    "human_removed": 0,
+    "total_committed": 2583,
+    "total_lines_changed": 2583,
+    "agent_percentage": 86.52729384436701,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 321,
+      "agent_lines_added": 863,
+      "agent_lines_removed": 88,
+      "user_removed_per_file": {
+        "app/page.tsx": 321
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1275,
+      "agent_lines_removed": 93
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1834,
+      "agent_lines_removed": 93
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1895,
+      "agent_lines_removed": 93
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1895,
+      "agent_lines_removed": 93
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1895,
+      "agent_lines_removed": 93
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1895,
+      "agent_lines_removed": 93
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 14,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 15,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 16,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2359,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 17,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2361,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 18,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2366,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 19,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2366,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    },
+    {
+      "checkpoint_number": 20,
+      "user_lines_added": 29,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2556,
+      "agent_lines_removed": 95,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 9,
+        ".idea/misc.xml": 6,
+        ".idea/modules.xml": 8,
+        ".idea/vcs.xml": 6
+      }
+    }
+  ]
+}
