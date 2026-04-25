@@ -1,0 +1,81 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "6526d4c6b85a",
+  "session_id": "0ea12243-7f4d-440b-9696-08e38355b60e",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T16:58:00.11604Z",
+  "branch": "feat/choice-page",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "app/components/workspace/ChoiceScreen.tsx",
+    "app/components/workspace/FloatingToolbar.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx"
+  ],
+  "agent": "Gemini CLI",
+  "model": "gemini-3-flash-preview",
+  "turn_id": "10594ba9d79f",
+  "session_metrics": {
+    "turn_count": 17
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T16:58:00.082016Z",
+    "agent_lines": 118,
+    "agent_removed": 37,
+    "human_added": 648,
+    "human_modified": 191,
+    "human_removed": 0,
+    "total_committed": 941,
+    "total_lines_changed": 1096,
+    "agent_percentage": 14.142335766423358,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 22,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 97,
+      "agent_lines_removed": 37
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 330,
+      "agent_lines_removed": 53
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 8,
+      "user_lines_removed": 8,
+      "agent_lines_added": 330,
+      "agent_lines_removed": 53,
+      "user_added_per_file": {
+        "app/components/workspace/ChoiceScreen.tsx": 8
+      },
+      "user_removed_per_file": {
+        "app/components/workspace/ChoiceScreen.tsx": 8
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 8,
+      "user_lines_removed": 8,
+      "agent_lines_added": 331,
+      "agent_lines_removed": 54,
+      "user_added_per_file": {
+        "app/components/workspace/ChoiceScreen.tsx": 8
+      },
+      "user_removed_per_file": {
+        "app/components/workspace/ChoiceScreen.tsx": 8
+      }
+    }
+  ]
+}
