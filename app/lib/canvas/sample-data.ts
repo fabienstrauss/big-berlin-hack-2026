@@ -63,6 +63,10 @@ export function inferMediaType(file: File): CanvasAssetItem['type'] {
     return 'video';
   }
 
+  if (file.type.startsWith('audio/')) {
+    return 'audio';
+  }
+
   return 'document';
 }
 

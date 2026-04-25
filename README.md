@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Big Berlin Hack 2026 - Video Pipeline
 
-## Getting Started
+Canvas-first workflow for creating branded media with provider orchestration:
 
-First, run the development server:
+- **Google Vertex / Gemini**: Nano Banana image generation + Veo video generation
+- **Tavily**: context search + citations
+- **Gradium**: narration audio
+- **Hera**: animation generation
+
+## Local setup
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App: [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Set local secrets in `.env.local` (already git-ignored):
 
-## Learn More
+```bash
+GOOGLE_API_KEY=...
+GOOGLE_GENAI_API_VERSION=v1beta
 
-To learn more about Next.js, take a look at the following resources:
+TAVILY_API_KEY=...
+GRADIUM_API_KEY=...
+HERA_API_KEY=...
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+GCS_VIDEO_BUCKET=...
+GCS_SIGNED_URL_TTL_SECONDS=86400
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Optional overrides
+VERTEX_IMAGE_MODEL=gemini-2.5-flash-image
+VERTEX_VIDEO_MODEL=veo-3.0-fast-generate-001
+VERTEX_VIDEO_DURATION_SECONDS=8
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+ADC mode is still supported for deploy/local via:
 
-## Deploy on Vercel
+```bash
+gcloud auth application-default login
+GOOGLE_CLOUD_PROJECT=...
+GOOGLE_CLOUD_LOCATION=europe-west4
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Supabase CLI migration (additive)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The project now includes an additive migration for async video jobs:
+
+```bash
+supabase link --project-ref sxgpuibtssqicomzescn
+supabase db push
+```
+
+Migration adds only:
+
+- `public.generation_jobs` table
+- indexes on `status` and `created_at`
+- `updated_at` trigger for `generation_jobs`
+
+No existing `canvas_state` objects are removed or overwritten.
+
+## Async video jobs API
+
+- `POST /api/jobs` creates an async Veo job in `generation_jobs`
+- `GET /api/jobs/:id` polls status and finalizes artifact URL
+- `/api/generate` remains sync by default and supports optional `mode: \"async\"` for video
+
+Completed async jobs attempt to persist Veo output into `GCS_VIDEO_BUCKET` and return a signed URL.
+If GCS upload/signing fails but provider output exists, job is marked `completed` with a warning and provider URI fallback.
+
+## Local smoke test (job create + poll + video URL)
+
+With `npm run dev` running:
+
+```bash
+npm run jobs:smoke
+```
+
+Optional browser auto-open:
+
+```bash
+OPEN_VIDEO=1 npm run jobs:smoke
+```
+
+## Playwright E2E validation
+
+Install browser runtime once:
+
+```bash
+npm run test:e2e:install
+```
+
+### 1) Deterministic regression suite (mocked)
+
+```bash
+npm run test:e2e
+```
+
+What it validates:
+
+- generate flow node insertion
+- Tavily scrape node insertion
+- controlled generation error rendering
+- Hera placeholder rendering stability
+
+### 2) Full paid live matrix (all providers)
+
+```bash
+PLAYWRIGHT_LIVE=1 LIVE_DEPTH=full npm run test:e2e:live
+```
+
+Required env for live suite:
+
+- `GOOGLE_API_KEY`
+- `TAVILY_API_KEY`
+- `GRADIUM_API_KEY`
+- `HERA_API_KEY`
+
+Live matrix coverage:
+
+- Tavily context + image stack
+- Vertex Nano Banana image generation
+- Vertex Imagen fallback model path (request-level model override)
+- Veo video generation
+- Veo invalid-duration boundary -> controlled error node
+- Gradium narration (wav + opus)
+- Hera animation generation
+- full E2E flow (brand file + Tavily context + Veo + Gradium)
+
+## Runtime/cost profile for live tests
+
+Expected with valid quota/keys:
+
+- Duration: typically **12-25 minutes** total
+- Credit usage: dominated by Veo and image generation calls
+- Reliability: live tests run serially to reduce flake
+
+Failure artifacts are kept automatically:
+
+- screenshots on failure
+- traces on failure/retry
+- videos on failure
+
+## Notes
+
+- Playwright projects are configured in `playwright.config.ts` (`mock` and `live`)
+- Live tests are manual-run only (not wired to CI in this branch)
+- Secrets must stay in `.env.local` or Secret Manager, never committed

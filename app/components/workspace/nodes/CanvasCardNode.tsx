@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import {
+  AudioLines,
   FileText,
   ImageIcon,
   NotebookPen,
@@ -41,6 +42,10 @@ function MediaIcon({ type }: { type: CanvasAssetItem['type'] }) {
 
   if (type === 'video') {
     return <Video className="size-4" />;
+  }
+
+  if (type === 'audio') {
+    return <AudioLines className="size-4" />;
   }
 
   return <FileText className="size-4" />;
@@ -186,6 +191,23 @@ export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
                       </div>
                     </div>
                   )
+                ) : null}
+
+                {item.type === 'audio' ? (
+                  <div className="flex items-center gap-3 p-4">
+                    <div className="flex size-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-700">
+                      <AudioLines className="size-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-slate-900">
+                        {trimLabel(item.label)}
+                      </p>
+                      <p className="text-xs text-slate-500">{item.meta}</p>
+                      {item.previewUrl ? (
+                        <audio src={item.previewUrl} controls className="mt-2 w-full" />
+                      ) : null}
+                    </div>
+                  </div>
                 ) : null}
 
                 {item.type === 'document' ? (

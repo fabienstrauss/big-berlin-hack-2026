@@ -253,7 +253,12 @@ export function useCanvasBoard() {
       });
 
       if (!response.ok) {
-        throw new Error(`Request failed for ${path}`);
+        const errorPayload = await response
+          .json()
+          .catch(() => ({ error: `Request failed for ${path}` })) as {
+          error?: string;
+        };
+        throw new Error(errorPayload.error || `Request failed for ${path}`);
       }
 
       return (await response.json()) as CanvasInsertionPayload;
@@ -277,7 +282,7 @@ export function useCanvasBoard() {
         if (supabase) {
           const uploadedAsset = await uploadCanvasAsset(supabase, file, index);
           previewUrl = uploadedAsset.publicUrl;
-        } else if (type === 'image' || type === 'video') {
+        } else if (type === 'image' || type === 'video' || type === 'audio') {
           previewUrl = URL.createObjectURL(file);
           objectUrlsRef.current.push(previewUrl);
         }
@@ -289,6 +294,8 @@ export function useCanvasBoard() {
           meta:
             type === 'document'
               ? `${Math.max(1, Math.round(file.size / 1024))} KB document`
+              : type === 'audio'
+                ? `${Math.max(1, Math.round(file.size / 1024 / 1024))} MB audio`
               : `${Math.max(1, Math.round(file.size / 1024 / 1024))} MB ${type}`,
           previewUrl,
         };

@@ -18,6 +18,15 @@ import { CanvasCardNode } from './nodes/CanvasCardNode';
 
 type ActivePanel = 'upload' | 'generate' | 'scrape' | 'template' | null;
 
+async function fileToDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error(`Unable to read file ${file.name}`));
+    reader.readAsDataURL(file);
+  });
+}
+
 function trimLabel(label: string, maxLength = 42) {
   if (label.length <= maxLength) {
     return label;
@@ -57,11 +66,19 @@ export function WorkspaceCanvas() {
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
   const [generateType, setGenerateType] = useState<'image' | 'video' | 'animation'>('image');
   const [generatePrompt, setGeneratePrompt] = useState('');
+  const [generateContextQuery, setGenerateContextQuery] = useState('');
+  const [includeGenerationResearch, setIncludeGenerationResearch] = useState(true);
+  const [brandNotes, setBrandNotes] = useState('');
+  const [brandFiles, setBrandFiles] = useState<File[]>([]);
+  const [enableAudio, setEnableAudio] = useState(false);
+  const [audioVoiceId, setAudioVoiceId] = useState('');
+  const [audioFormat, setAudioFormat] = useState<'wav' | 'opus' | 'pcm'>('wav');
   const [searchQuery, setSearchQuery] = useState('');
   const [includeImages, setIncludeImages] = useState(true);
   const [templateProduct, setTemplateProduct] = useState('');
   const [templateVibe, setTemplateVibe] = useState('editorial minimal');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const generateBrandInputRef = useRef<HTMLInputElement | null>(null);
 
   const nodeTypes = useMemo(
     () => ({
@@ -110,11 +127,38 @@ export function WorkspaceCanvas() {
     setIsGenerating(true);
 
     try {
+      const serializedBrandAssets = await Promise.all(
+        brandFiles.map(async (file) => ({
+          name: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          dataUrl: await fileToDataUrl(file),
+        })),
+      );
+
       await actions.addGeneratedContent({
         type: generateType,
         prompt: generatePrompt.trim(),
+        contextQuery: generateContextQuery.trim(),
+        includeResearch: includeGenerationResearch,
+        brandNotes: brandNotes.trim(),
+        brandAssets: serializedBrandAssets,
+        audio: {
+          enabled: enableAudio,
+          voiceId: audioVoiceId.trim() || undefined,
+          outputFormat: audioFormat,
+        },
       });
       setGeneratePrompt('');
+      setGenerateContextQuery('');
+      setIncludeGenerationResearch(true);
+      setBrandNotes('');
+      setBrandFiles([]);
+      setEnableAudio(false);
+      setAudioVoiceId('');
+      setAudioFormat('wav');
+      if (generateBrandInputRef.current) {
+        generateBrandInputRef.current.value = '';
+      }
       closePanel();
     } finally {
       setIsGenerating(false);
@@ -132,6 +176,7 @@ export function WorkspaceCanvas() {
       await actions.addResearchPack({
         query: searchQuery.trim(),
         includeImages,
+        maxResults: 6,
       });
       setSearchQuery('');
       setIncludeImages(true);
@@ -212,12 +257,13 @@ export function WorkspaceCanvas() {
           description="Choose images, videos, or documents. Each file will appear as its own asset on the canvas."
           onClose={closePanel}
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4" data-testid="panel-upload">
             <input
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt"
+              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.txt"
+              data-testid="upload-files-input"
               onChange={(event) =>
                 setSelectedFiles(Array.from(event.target.files ?? []))
               }
@@ -245,6 +291,7 @@ export function WorkspaceCanvas() {
               <button
                 type="button"
                 onClick={handleUploadSubmit}
+                data-testid="upload-submit-btn"
                 className="rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!selectedFiles.length || isUploading}
               >
@@ -265,10 +312,10 @@ export function WorkspaceCanvas() {
       {activePanel === 'generate' ? (
         <WorkspaceActionPanel
           title="Generate Content"
-          description="Choose what to create, describe it with a prompt, and a mock result will be placed on the canvas."
+          description="Generate branded visuals with Vertex/Hera, optional Tavily context, and optional Gradium narration."
           onClose={closePanel}
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4" data-testid="panel-generate">
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-slate-700">Output type</span>
               <select
@@ -276,6 +323,7 @@ export function WorkspaceCanvas() {
                 onChange={(event) =>
                   setGenerateType(event.target.value as 'image' | 'video' | 'animation')
                 }
+                data-testid="generate-type-select"
                 className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
               >
                 <option value="image">Image with Nanobanana</option>
@@ -284,22 +332,119 @@ export function WorkspaceCanvas() {
               </select>
             </label>
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-slate-700">Prompt</span>
+              <span className="text-sm font-medium text-slate-700">Core prompt</span>
               <textarea
                 value={generatePrompt}
                 onChange={(event) => setGeneratePrompt(event.target.value)}
+                data-testid="generate-prompt-input"
                 placeholder="A premium hero visual for a smart bottle on a marble desk at sunrise..."
                 className="min-h-28 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
               />
             </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-slate-700">Tavily context query (optional)</span>
+              <input
+                value={generateContextQuery}
+                onChange={(event) => setGenerateContextQuery(event.target.value)}
+                data-testid="generate-context-query-input"
+                placeholder="Latest social trends for hydration products in DACH"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
+              />
+            </label>
+            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={includeGenerationResearch}
+                onChange={(event) => setIncludeGenerationResearch(event.target.checked)}
+                data-testid="generate-include-research-toggle"
+                className="size-4 rounded border-slate-300"
+              />
+              Enrich prompt with Tavily citations when a context query is provided
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-slate-700">Brand notes (optional)</span>
+              <textarea
+                value={brandNotes}
+                onChange={(event) => setBrandNotes(event.target.value)}
+                data-testid="generate-brand-notes-input"
+                placeholder="Primary colors #002B5B and #00B7C2, premium but friendly tone, short CTA."
+                className="min-h-20 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-slate-700">Brand files (image/PDF, optional)</span>
+              <input
+                ref={generateBrandInputRef}
+                type="file"
+                multiple
+                accept="image/*,.pdf"
+                data-testid="generate-brand-files-input"
+                onChange={(event) => setBrandFiles(Array.from(event.target.files ?? []))}
+                className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-600 file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white"
+              />
+            </label>
+            {brandFiles.length ? (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <p className="mb-2 text-sm font-medium text-slate-900">Brand files included</p>
+                <div className="flex flex-col gap-2">
+                  {brandFiles.map((file) => (
+                    <div
+                      key={`${file.name}-${file.lastModified}`}
+                      className="truncate rounded-2xl bg-white px-3 py-2 text-sm text-slate-600"
+                      title={file.name}
+                    >
+                      {trimLabel(file.name)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={enableAudio}
+                onChange={(event) => setEnableAudio(event.target.checked)}
+                data-testid="generate-audio-toggle"
+                className="size-4 rounded border-slate-300"
+              />
+              Generate narration audio with Gradium
+            </label>
+            {enableAudio ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-slate-700">Gradium voice ID (optional)</span>
+                  <input
+                    value={audioVoiceId}
+                    onChange={(event) => setAudioVoiceId(event.target.value)}
+                    data-testid="generate-audio-voice-input"
+                    placeholder="YTpq7expH9539ERJ"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
+                  />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-slate-700">Audio format</span>
+                  <select
+                    value={audioFormat}
+                    onChange={(event) => setAudioFormat(event.target.value as 'wav' | 'opus' | 'pcm')}
+                    data-testid="generate-audio-format-select"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
+                  >
+                    <option value="wav">WAV</option>
+                    <option value="opus">Opus</option>
+                    <option value="pcm">PCM</option>
+                  </select>
+                </label>
+              </div>
+            ) : null}
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleGenerateSubmit}
+                data-testid="generate-submit-btn"
                 className="rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!generatePrompt.trim() || isGenerating}
               >
-                {isGenerating ? 'Generating...' : 'Generate mock result'}
+                {isGenerating ? 'Generating...' : 'Generate and insert'}
               </button>
               <button
                 type="button"
@@ -319,12 +464,13 @@ export function WorkspaceCanvas() {
           description="Enter what you want to research. The board will add a search result note and optionally an image stack."
           onClose={closePanel}
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4" data-testid="panel-scrape">
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-slate-700">What should Tavily look for?</span>
               <textarea
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
+                data-testid="scrape-query-input"
                 placeholder="Best landing pages for wellness product launches"
                 className="min-h-24 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
               />
@@ -334,6 +480,7 @@ export function WorkspaceCanvas() {
                 type="checkbox"
                 checked={includeImages}
                 onChange={(event) => setIncludeImages(event.target.checked)}
+                data-testid="scrape-include-images-toggle"
                 className="size-4 rounded border-slate-300"
               />
               Include images and add them as a stack on the canvas
@@ -342,6 +489,7 @@ export function WorkspaceCanvas() {
               <button
                 type="button"
                 onClick={handleScrapeSubmit}
+                data-testid="scrape-submit-btn"
                 className="rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!searchQuery.trim() || isSearching}
               >

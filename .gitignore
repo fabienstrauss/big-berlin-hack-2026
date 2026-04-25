@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -74,3 +76,4 @@ next-env.d.ts
 /cat-video/
 /skills/
 /skills-lock.json
+/supabase/.temp/

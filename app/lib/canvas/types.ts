@@ -8,7 +8,7 @@ export type CanvasNodeKind =
   | 'image-stack'
   | 'template';
 
-export type MediaType = 'image' | 'video' | 'document';
+export type MediaType = 'image' | 'video' | 'audio' | 'document';
 
 export type CanvasAssetItem = {
   id: string;

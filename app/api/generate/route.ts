@@ -1,10 +1,28 @@
 import { NextResponse } from 'next/server';
 
 import type { GenerateInput } from '../../lib/canvas/contracts';
-import { createMockGenerationPayload } from '../../lib/canvas/mock-content';
+import { buildGenerationPayload } from '../../lib/server/pipeline';
+import { createVideoGenerationJob } from '../../lib/server/video-jobs';
+
+export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as GenerateInput;
+  try {
+    const body = (await request.json()) as GenerateInput;
 
-  return NextResponse.json(createMockGenerationPayload(body));
+    if (body.mode === 'async' && body.type === 'video') {
+      const job = await createVideoGenerationJob(body);
+      return NextResponse.json(job, { status: 202 });
+    }
+
+    const payload = await buildGenerationPayload(body);
+    return NextResponse.json(payload);
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : 'Generation request failed',
+      },
+      { status: 500 },
+    );
+  }
 }
