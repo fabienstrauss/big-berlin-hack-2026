@@ -1,0 +1,35 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "8d6fdb45e2e1",
+  "strategy": "manual-commit",
+  "branch": "feature/video-pipeline",
+  "checkpoints_count": 11,
+  "files_touched": [
+    "README.md",
+    "app/api/generate/route.ts",
+    "app/api/jobs/[id]/route.ts",
+    "app/api/jobs/route.ts",
+    "app/lib/canvas/contracts.ts",
+    "app/lib/server/pipeline.ts",
+    "app/lib/server/providers/vertex.ts",
+    "app/lib/server/video-jobs.ts",
+    "docs/adc-cloud-run.md",
+    "tests/e2e/helpers.ts",
+    "tests/e2e/pipeline.live.spec.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/8d/6fdb45e2e1/0/metadata.json",
+      "transcript": "/8d/6fdb45e2e1/0/full.jsonl",
+      "content_hash": "/8d/6fdb45e2e1/0/content_hash.txt",
+      "prompt": "/8d/6fdb45e2e1/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 875589,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 27211264,
+    "output_tokens": 117542,
+    "api_call_count": 316
+  }
+}
