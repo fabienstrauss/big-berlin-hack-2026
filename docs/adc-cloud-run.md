@@ -1,15 +1,17 @@
-# ADC-First Setup (with API-Key Fallback)
+# Vertex Setup (Explicit Mode) + API-Key-First Default
 
-This project is implemented to use Vertex AI through Application Default Credentials (ADC) and Cloud Run service account IAM.
+This project now defaults to API-key-first auth for hackathon reliability.
+Vertex AI via ADC is still supported, but only when explicitly enabled.
 
-If you already have a Google GenAI/Vertex API key, local development can use:
+For API-key-first local development:
 
 ```bash
-export GOOGLE_API_KEY=<YOUR_KEY>
+export GOOGLE_GENAI_AUTH_MODE=api_key_first
+export GOOGLE_GENAI_API_KEY=<YOUR_KEY>
 export GOOGLE_GENAI_API_VERSION=v1beta
 ```
 
-The provider automatically prefers ADC (project+location) when configured, and falls back to `GOOGLE_API_KEY` otherwise.
+Vertex mode is used only if explicitly requested by auth mode or `GOOGLE_GENAI_USE_VERTEXAI=true`.
 
 ## 1) Local development
 
@@ -23,9 +25,11 @@ gcloud config set project <PROJECT_ID>
 Set runtime env:
 
 ```bash
+export GOOGLE_GENAI_AUTH_MODE=vertex_first
 export GOOGLE_GENAI_USE_VERTEXAI=true
 export GOOGLE_CLOUD_PROJECT=<PROJECT_ID>
-export GOOGLE_CLOUD_LOCATION=europe-west4
+export GOOGLE_CLOUD_LOCATION=us-central1
+export VERTEX_VIDEO_LOCATION=us-central1
 ```
 
 ## 2) APIs to enable
@@ -88,7 +92,7 @@ gcloud run deploy video-pipeline \
   --source . \
   --region europe-west4 \
   --service-account video-pipeline-sa@<PROJECT_ID>.iam.gserviceaccount.com \
-  --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=<PROJECT_ID>,GOOGLE_CLOUD_LOCATION=europe-west4,GCS_VIDEO_BUCKET=<GCS_VIDEO_BUCKET>,GCS_SIGNED_URL_TTL_SECONDS=86400,NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>,NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY> \
+  --set-env-vars GOOGLE_GENAI_AUTH_MODE=vertex_first,GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=<PROJECT_ID>,GOOGLE_CLOUD_LOCATION=us-central1,VERTEX_VIDEO_LOCATION=us-central1,GCS_VIDEO_BUCKET=<GCS_VIDEO_BUCKET>,GCS_SIGNED_URL_TTL_SECONDS=86400,NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>,NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY> \
   --set-secrets TAVILY_API_KEY=TAVILY_API_KEY:latest,GRADIUM_API_KEY=GRADIUM_API_KEY:latest,HERA_API_KEY=HERA_API_KEY:latest,SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest
 ```
 

@@ -42,9 +42,27 @@ export type GenerateModelOverrides = {
 
 export type GenerationJobStatus = 'queued' | 'running' | 'completed' | 'failed';
 
+export type GenerationErrorCategory =
+  | 'quota_exhausted'
+  | 'model_not_found_or_no_access'
+  | 'auth_config'
+  | 'transient'
+  | 'unknown';
+
+export type GenerationErrorMeta = {
+  category: GenerationErrorCategory;
+  status?: string | null;
+  statusCode?: number | null;
+  retryable: boolean;
+  message: string;
+  hint?: string | null;
+};
+
 export type GenerationJobCreateResponse = {
   jobId: string;
   status: GenerationJobStatus;
+  error?: string | null;
+  errorMeta?: GenerationErrorMeta | null;
 };
 
 export type GenerationJobResponse = {
@@ -56,6 +74,7 @@ export type GenerationJobResponse = {
   artifactUrl?: string | null;
   warning?: string | null;
   error?: string | null;
+  errorMeta?: GenerationErrorMeta | null;
   completedWithWarning?: boolean;
 };
 

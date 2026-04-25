@@ -7,7 +7,11 @@ import {
   createUserContent,
 } from '@google/genai';
 
-import type { BrandAssetInput } from '@/app/lib/canvas/contracts';
+import type {
+  BrandAssetInput,
+  GenerationErrorCategory,
+  GenerationErrorMeta,
+} from '@/app/lib/canvas/contracts';
 
 import type { TavilySearchOutput } from './tavily';
 
@@ -68,11 +72,62 @@ export type VertexVideoOperationPayload = {
   [key: string]: unknown;
 };
 
-let cachedClient: GoogleGenAI | null = null;
+export type GoogleGenAIAuthMode =
+  | 'api_key_first'
+  | 'vertex_first'
+  | 'api_key_only'
+  | 'vertex_only';
+
+type GoogleGenAIClientSource = 'api_key' | 'vertex';
+
+type GoogleGenAIClientContext = {
+  client: GoogleGenAI;
+  source: GoogleGenAIClientSource;
+  project?: string;
+  location?: string;
+};
+
+type VertexProjectConfig = {
+  project: string;
+  location: string;
+  apiVersion: string;
+};
+
+type ApiKeyConfig = {
+  apiKey: string;
+  apiVersion: string;
+};
+
+type ParsedGoogleApiError = {
+  statusCode?: number | null;
+  status?: string | null;
+  message: string;
+  rawMessage?: string | null;
+};
+
+class GenerationProviderError extends Error {
+  meta: GenerationErrorMeta;
+
+  constructor(meta: GenerationErrorMeta, cause?: unknown) {
+    super(formatGenerationErrorMessage(meta));
+    this.name = 'GenerationProviderError';
+    this.meta = meta;
+
+    if (cause !== undefined) {
+      (this as Error & { cause?: unknown }).cause = cause;
+    }
+  }
+}
+
+let cachedDefaultClientContext: GoogleGenAIClientContext | null = null;
+let cachedVideoClientContext: GoogleGenAIClientContext | null = null;
 
 const DEFAULT_TEXT_MODEL = 'gemini-2.5-flash';
 const DEFAULT_IMAGE_MODEL = 'gemini-2.5-flash-image';
 const DEFAULT_VIDEO_MODEL = 'veo-3.0-fast-generate-001';
+const DEFAULT_AUTH_MODE: GoogleGenAIAuthMode = 'api_key_first';
+const DEFAULT_RETRY_ATTEMPTS = 3;
+const DEFAULT_RETRY_DELAY_MS = 1500;
 
 function compactText(value: string, max = 280) {
   const normalized = value.replace(/\s+/g, ' ').trim();
@@ -119,9 +174,225 @@ function dataUrlToBase64(asset: BrandAssetInput) {
   return asset.dataUrl.slice(separatorIndex + 1);
 }
 
-function getVertexProjectConfig() {
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getAuthMode(): GoogleGenAIAuthMode {
+  const raw = process.env.GOOGLE_GENAI_AUTH_MODE?.trim().toLowerCase();
+
+  if (
+    raw === 'api_key_first' ||
+    raw === 'vertex_first' ||
+    raw === 'api_key_only' ||
+    raw === 'vertex_only'
+  ) {
+    return raw;
+  }
+
+  return DEFAULT_AUTH_MODE;
+}
+
+function isVertexExplicitlyEnabled() {
+  const raw = process.env.GOOGLE_GENAI_USE_VERTEXAI?.trim().toLowerCase();
+  return raw === '1' || raw === 'true' || raw === 'yes';
+}
+
+function parseGoogleApiError(error: unknown): ParsedGoogleApiError {
+  if (!(error instanceof Error)) {
+    return {
+      message: 'Unknown provider error',
+      rawMessage: null,
+      status: null,
+      statusCode: null,
+    };
+  }
+
+  const rawMessage = error.message?.trim();
+  if (!rawMessage) {
+    return {
+      message: 'Unknown provider error',
+      rawMessage,
+      status: null,
+      statusCode: null,
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(rawMessage) as {
+      error?: {
+        code?: number;
+        status?: string;
+        message?: string;
+      };
+    };
+
+    return {
+      statusCode: parsed.error?.code ?? null,
+      status: parsed.error?.status ?? null,
+      message: parsed.error?.message?.trim() || rawMessage,
+      rawMessage,
+    };
+  } catch {
+    return {
+      message: rawMessage,
+      rawMessage,
+      status: null,
+      statusCode: null,
+    };
+  }
+}
+
+function classifyErrorCategory(parsed: ParsedGoogleApiError): GenerationErrorCategory {
+  const status = parsed.status?.toUpperCase() ?? '';
+  const message = parsed.message.toLowerCase();
+
+  if (status === 'RESOURCE_EXHAUSTED' || parsed.statusCode === 429) {
+    return 'quota_exhausted';
+  }
+
+  if (status === 'NOT_FOUND' && (message.includes('model') || message.includes('access'))) {
+    return 'model_not_found_or_no_access';
+  }
+
+  if (
+    status === 'UNAUTHENTICATED' ||
+    status === 'PERMISSION_DENIED' ||
+    message.includes('not configured') ||
+    message.includes('missing required')
+  ) {
+    return 'auth_config';
+  }
+
+  if (
+    status === 'UNAVAILABLE' ||
+    status === 'INTERNAL' ||
+    status === 'DEADLINE_EXCEEDED' ||
+    parsed.statusCode === 503 ||
+    parsed.statusCode === 504 ||
+    message.includes('timed out') ||
+    message.includes('network')
+  ) {
+    return 'transient';
+  }
+
+  return 'unknown';
+}
+
+function buildErrorHint(category: GenerationErrorCategory) {
+  if (category === 'quota_exhausted') {
+    return 'Quota exhausted. Verify project tier/quota in AI Studio and retry later.';
+  }
+
+  if (category === 'model_not_found_or_no_access') {
+    return 'Model unavailable for current project or region. Check Veo model access and region.';
+  }
+
+  if (category === 'auth_config') {
+    return 'Auth configuration is invalid. Verify GOOGLE_GENAI_API_KEY or Vertex credentials.';
+  }
+
+  if (category === 'transient') {
+    return 'Temporary upstream issue. Retry with backoff.';
+  }
+
+  return 'Review provider logs for the full response payload.';
+}
+
+export function toGenerationErrorMeta(error: unknown): GenerationErrorMeta {
+  if (
+    error instanceof GenerationProviderError &&
+    error.meta &&
+    typeof error.meta.category === 'string'
+  ) {
+    return error.meta;
+  }
+
+  const parsed = parseGoogleApiError(error);
+  const category = classifyErrorCategory(parsed);
+
+  return {
+    category,
+    status: parsed.status ?? null,
+    statusCode: parsed.statusCode ?? null,
+    retryable: category === 'transient' || category === 'quota_exhausted',
+    message: parsed.message,
+    hint: buildErrorHint(category),
+  };
+}
+
+export function formatGenerationErrorMessage(meta: GenerationErrorMeta) {
+  const statusPrefix = meta.status ? `[${meta.status}] ` : '';
+  const statusCodeSuffix = meta.statusCode ? ` (code ${meta.statusCode})` : '';
+
+  if (meta.hint) {
+    return `${statusPrefix}${meta.message}${statusCodeSuffix}. ${meta.hint}`;
+  }
+
+  return `${statusPrefix}${meta.message}${statusCodeSuffix}`;
+}
+
+function toProviderError(error: unknown) {
+  if (error instanceof GenerationProviderError) {
+    return error;
+  }
+
+  return new GenerationProviderError(toGenerationErrorMeta(error), error);
+}
+
+function getRetryAttempts() {
+  return Number(process.env.GOOGLE_GENAI_RETRY_ATTEMPTS ?? DEFAULT_RETRY_ATTEMPTS);
+}
+
+function getRetryDelayMs() {
+  return Number(process.env.GOOGLE_GENAI_RETRY_DELAY_MS ?? DEFAULT_RETRY_DELAY_MS);
+}
+
+async function withProviderRetry<T>(
+  fn: () => Promise<T>,
+  options?: {
+    shouldRetry?: (meta: GenerationErrorMeta) => boolean;
+  },
+): Promise<T> {
+  const attempts = Math.max(1, getRetryAttempts());
+  const delayMs = Math.max(0, getRetryDelayMs());
+
+  let latestError: GenerationProviderError | null = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      const providerError = toProviderError(error);
+      latestError = providerError;
+
+      const canRetryByCategory = providerError.meta.retryable;
+      const canRetryByOption = options?.shouldRetry
+        ? options.shouldRetry(providerError.meta)
+        : true;
+
+      if (attempt >= attempts || !canRetryByCategory || !canRetryByOption) {
+        throw providerError;
+      }
+
+      await sleep(delayMs * attempt);
+    }
+  }
+
+  throw latestError ?? new GenerationProviderError(toGenerationErrorMeta(new Error('Retry failed')));
+}
+
+function getVertexProjectConfig(options?: {
+  forVideo?: boolean;
+  locationOverride?: string;
+}): VertexProjectConfig | null {
   const project = process.env.GOOGLE_CLOUD_PROJECT;
-  const location = process.env.GOOGLE_CLOUD_LOCATION;
+  const explicitLocationOverride = options?.locationOverride?.trim();
+  const videoLocationOverride = options?.forVideo
+    ? process.env.VERTEX_VIDEO_LOCATION?.trim()
+    : null;
+  const location =
+    explicitLocationOverride || videoLocationOverride || process.env.GOOGLE_CLOUD_LOCATION;
 
   if (!project || !location) {
     return null;
@@ -134,8 +405,9 @@ function getVertexProjectConfig() {
   };
 }
 
-function getApiKeyConfig() {
+function getApiKeyConfig(): ApiKeyConfig | null {
   const apiKey =
+    process.env.GOOGLE_GENAI_API_KEY ??
     process.env.GOOGLE_API_KEY ??
     process.env.GEMINI_API_KEY ??
     process.env.VERTEX_API_KEY;
@@ -150,40 +422,110 @@ function getApiKeyConfig() {
   };
 }
 
-function getVertexClient() {
-  if (cachedClient) {
-    return cachedClient;
-  }
-
-  const vertexConfig = getVertexProjectConfig();
-
-  if (vertexConfig) {
-    cachedClient = new GoogleGenAI({
+function createVertexClientContext(
+  vertexConfig: VertexProjectConfig,
+): GoogleGenAIClientContext {
+  return {
+    client: new GoogleGenAI({
       vertexai: true,
       project: vertexConfig.project,
       location: vertexConfig.location,
       apiVersion: vertexConfig.apiVersion,
-    });
+    }),
+    source: 'vertex',
+    project: vertexConfig.project,
+    location: vertexConfig.location,
+  };
+}
 
-    return cachedClient;
+function createApiKeyClientContext(apiKeyConfig: ApiKeyConfig): GoogleGenAIClientContext {
+  return {
+    client: new GoogleGenAI({
+      apiKey: apiKeyConfig.apiKey,
+      apiVersion: apiKeyConfig.apiVersion,
+      // Force Gemini API mode even when Vertex env vars are present globally.
+      vertexai: false,
+    }),
+    source: 'api_key',
+  };
+}
+
+function resolveClientContext(options?: {
+  forVideo?: boolean;
+  locationOverride?: string;
+}): GoogleGenAIClientContext | null {
+  const authMode = getAuthMode();
+  const vertexConfig = getVertexProjectConfig(options);
+  const apiKeyConfig = getApiKeyConfig();
+  const vertexAllowedByMode = authMode === 'vertex_first' || authMode === 'vertex_only';
+  const vertexEnabled = vertexAllowedByMode || isVertexExplicitlyEnabled();
+
+  if (authMode === 'api_key_only') {
+    return apiKeyConfig ? createApiKeyClientContext(apiKeyConfig) : null;
   }
 
-  const apiKeyConfig = getApiKeyConfig();
+  if (authMode === 'vertex_only') {
+    return vertexConfig ? createVertexClientContext(vertexConfig) : null;
+  }
 
-  if (!apiKeyConfig) {
+  if (authMode === 'vertex_first') {
+    if (vertexConfig && vertexEnabled) {
+      return createVertexClientContext(vertexConfig);
+    }
+
+    return apiKeyConfig ? createApiKeyClientContext(apiKeyConfig) : null;
+  }
+
+  if (apiKeyConfig) {
+    return createApiKeyClientContext(apiKeyConfig);
+  }
+
+  if (vertexConfig && vertexEnabled) {
+    return createVertexClientContext(vertexConfig);
+  }
+
+  return null;
+}
+
+function getVertexClient(options?: {
+  forVideo?: boolean;
+  locationOverride?: string;
+}): GoogleGenAIClientContext | null {
+  if (options?.locationOverride) {
+    return resolveClientContext(options);
+  }
+
+  const useVideoCache = Boolean(options?.forVideo);
+
+  if (useVideoCache && cachedVideoClientContext) {
+    return cachedVideoClientContext;
+  }
+
+  if (!useVideoCache && cachedDefaultClientContext) {
+    return cachedDefaultClientContext;
+  }
+
+  const context = resolveClientContext(options);
+
+  if (!context) {
     return null;
   }
 
-  cachedClient = new GoogleGenAI({
-    apiKey: apiKeyConfig.apiKey,
-    apiVersion: apiKeyConfig.apiVersion,
-  });
+  if (useVideoCache) {
+    cachedVideoClientContext = context;
+  } else {
+    cachedDefaultClientContext = context;
+  }
 
-  return cachedClient;
+  return context;
 }
 
 export function isVertexConfigured() {
-  return Boolean(getVertexProjectConfig() || getApiKeyConfig());
+  return Boolean(resolveClientContext());
+}
+
+export function getConfiguredAuthMode(): GoogleGenAIAuthMode {
+  return getAuthMode();
 }
 
 function createFallbackBrandProfile(
@@ -220,9 +562,9 @@ export async function extractBrandProfile(
     return createFallbackBrandProfile('', []);
   }
 
-  const client = getVertexClient();
+  const clientContext = getVertexClient();
 
-  if (!client) {
+  if (!clientContext) {
     return createFallbackBrandProfile(brandNotes, brandAssets);
   }
 
@@ -249,7 +591,7 @@ User notes: ${brandNotes || 'none'}`),
   ];
 
   try {
-    const response = await client.models.generateContent({
+    const response = await clientContext.client.models.generateContent({
       model,
       contents: [createUserContent(parts)],
       config: {
@@ -315,14 +657,14 @@ export async function rewriteNarrationScript(params: {
   composedPrompt: string;
   research?: TavilySearchOutput | null;
 }) {
-  const client = getVertexClient();
+  const clientContext = getVertexClient();
 
-  if (!client) {
+  if (!clientContext) {
     return compactText(params.originalPrompt, 420);
   }
 
   try {
-    const response = await client.models.generateContent({
+    const response = await clientContext.client.models.generateContent({
       model: process.env.VERTEX_SCRIPT_MODEL ?? DEFAULT_TEXT_MODEL,
       contents: `Rewrite this into a spoken narration for a short marketing video. Keep facts accurate, concise clauses, and natural pauses.\n\n${params.composedPrompt}`,
       config: {
@@ -340,11 +682,15 @@ export async function generateImageWithVertex(
   prompt: string,
   modelOverride?: string,
 ): Promise<VertexImageOutput> {
-  const client = getVertexClient();
+  const clientContext = getVertexClient();
 
-  if (!client) {
-    throw new Error(
-      'Google GenAI is not configured. Set ADC project/location or GOOGLE_API_KEY.',
+  if (!clientContext) {
+    throw new GenerationProviderError(
+      toGenerationErrorMeta(
+        new Error(
+          'Google GenAI is not configured. Set GOOGLE_GENAI_API_KEY or enable Vertex mode with project/location.',
+        ),
+      ),
     );
   }
 
@@ -353,13 +699,15 @@ export async function generateImageWithVertex(
     model.includes('gemini') && (model.includes('image') || model.includes('banana'));
 
   if (isGeminiImageModel) {
-    const response = await client.models.generateContent({
-      model,
-      contents: prompt,
-      config: {
-        responseModalities: [Modality.TEXT, Modality.IMAGE],
-      },
-    });
+    const response = await withProviderRetry(() =>
+      clientContext.client.models.generateContent({
+        model,
+        contents: prompt,
+        config: {
+          responseModalities: [Modality.TEXT, Modality.IMAGE],
+        },
+      }),
+    );
 
     const inline = response.candidates?.[0]?.content?.parts?.find((part) => part.inlineData)
       ?.inlineData;
@@ -377,16 +725,18 @@ export async function generateImageWithVertex(
     };
   }
 
-  const response = await client.models.generateImages({
-    model,
-    prompt,
-    config: {
-      numberOfImages: 1,
-      outputMimeType: 'image/png',
-      aspectRatio: '16:9',
-      includeRaiReason: true,
-    },
-  });
+  const response = await withProviderRetry(() =>
+    clientContext.client.models.generateImages({
+      model,
+      prompt,
+      config: {
+        numberOfImages: 1,
+        outputMimeType: 'image/png',
+        aspectRatio: '16:9',
+        includeRaiReason: true,
+      },
+    }),
+  );
 
   const image = response.generatedImages?.[0]?.image;
 
@@ -412,11 +762,18 @@ export async function generateVideoWithVertex(
 ): Promise<VertexVideoOutput> {
   const start = await startVideoGenerationWithVertex(prompt, options);
   let operation = start.operation;
-  const client = getVertexClient();
+  const clientContext = getVertexClient({
+    forVideo: true,
+    locationOverride: start.location,
+  });
 
-  if (!client) {
-    throw new Error(
-      'Google GenAI is not configured. Set ADC project/location or GOOGLE_API_KEY.',
+  if (!clientContext) {
+    throw new GenerationProviderError(
+      toGenerationErrorMeta(
+        new Error(
+          'Google GenAI is not configured. Set GOOGLE_GENAI_API_KEY or enable Vertex mode with project/location.',
+        ),
+      ),
     );
   }
 
@@ -424,10 +781,16 @@ export async function generateVideoWithVertex(
   const pollDelayMs = Number(process.env.VERTEX_VIDEO_POLL_DELAY_MS ?? 5000);
 
   for (let attempt = 0; !operation.done && attempt < maxPolls; attempt += 1) {
-    await new Promise((resolve) => setTimeout(resolve, pollDelayMs));
-    operation = (await client.operations.getVideosOperation({
-      operation: operation as never,
-    })) as unknown as VertexVideoOperationPayload;
+    await sleep(pollDelayMs);
+    operation = await withProviderRetry(
+      async () =>
+        ((await clientContext.client.operations.getVideosOperation({
+          operation: operation as never,
+        })) as unknown as VertexVideoOperationPayload),
+      {
+        shouldRetry: (meta) => meta.category !== 'model_not_found_or_no_access',
+      },
+    );
   }
 
   if (!operation.done) {
@@ -495,57 +858,109 @@ function normalizeVertexVideoOutput(
   return null;
 }
 
+function getVideoModelCandidates(modelOverride?: string) {
+  const primary = modelOverride ?? process.env.VERTEX_VIDEO_MODEL ?? DEFAULT_VIDEO_MODEL;
+  const fallbackRaw = process.env.VERTEX_VIDEO_MODEL_FALLBACKS ?? '';
+  const fallbacks = fallbackRaw
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  return Array.from(new Set([primary, ...fallbacks]));
+}
+
 export async function startVideoGenerationWithVertex(
   prompt: string,
   options?: {
     model?: string;
     durationSeconds?: number;
   },
-): Promise<{ model: string; operation: VertexVideoOperationPayload }> {
-  const client = getVertexClient();
+): Promise<{ model: string; operation: VertexVideoOperationPayload; location?: string }> {
+  const clientContext = getVertexClient({ forVideo: true });
 
-  if (!client) {
-    throw new Error(
-      'Google GenAI is not configured. Set ADC project/location or GOOGLE_API_KEY.',
+  if (!clientContext) {
+    throw new GenerationProviderError(
+      toGenerationErrorMeta(
+        new Error(
+          'Google GenAI is not configured. Set GOOGLE_GENAI_API_KEY or enable Vertex mode with project/location.',
+        ),
+      ),
     );
   }
 
-  const model = options?.model ?? process.env.VERTEX_VIDEO_MODEL ?? DEFAULT_VIDEO_MODEL;
+  const models = getVideoModelCandidates(options?.model);
   const durationSeconds =
     options?.durationSeconds ?? Number(process.env.VERTEX_VIDEO_DURATION_SECONDS ?? 8);
-  const operation = await client.models.generateVideos({
-    model,
-    source: {
-      prompt,
-    },
-    config: {
-      numberOfVideos: 1,
-      durationSeconds,
-      aspectRatio: process.env.VERTEX_VIDEO_ASPECT_RATIO ?? '16:9',
-      resolution: process.env.VERTEX_VIDEO_RESOLUTION ?? '720p',
-    },
-  });
+  let latestError: GenerationProviderError | null = null;
 
-  return {
-    model,
-    operation: operation as unknown as VertexVideoOperationPayload,
-  };
+  for (const model of models) {
+    try {
+      const operation = await withProviderRetry(
+        () =>
+          clientContext.client.models.generateVideos({
+            model,
+            source: {
+              prompt,
+            },
+            config: {
+              numberOfVideos: 1,
+              durationSeconds,
+              aspectRatio: process.env.VERTEX_VIDEO_ASPECT_RATIO ?? '16:9',
+              resolution: process.env.VERTEX_VIDEO_RESOLUTION ?? '720p',
+            },
+          }),
+        {
+          shouldRetry: (meta) => meta.category !== 'model_not_found_or_no_access',
+        },
+      );
+
+      return {
+        model,
+        operation: operation as unknown as VertexVideoOperationPayload,
+        location: clientContext.location,
+      };
+    } catch (error) {
+      const providerError = toProviderError(error);
+      latestError = providerError;
+
+      if (providerError.meta.category !== 'model_not_found_or_no_access') {
+        throw providerError;
+      }
+    }
+  }
+
+  throw (
+    latestError ??
+    new GenerationProviderError(
+      toGenerationErrorMeta(
+        new Error('No accessible Veo model found from configured primary/fallback list.'),
+      ),
+    )
+  );
 }
 
 export async function pollVideoGenerationOperation(
   operationPayload: VertexVideoOperationPayload | string,
   model: string,
+  locationOverride?: string,
 ): Promise<{
   done: boolean;
   operation: VertexVideoOperationPayload;
   output?: VertexVideoOutput;
   error?: string;
 }> {
-  const client = getVertexClient();
+  const clientContext = getVertexClient({
+    forVideo: true,
+    locationOverride,
+  });
 
-  if (!client) {
-    throw new Error(
-      'Google GenAI is not configured. Set ADC project/location or GOOGLE_API_KEY.',
+  if (!clientContext) {
+    throw new GenerationProviderError(
+      toGenerationErrorMeta(
+        new Error(
+          'Google GenAI is not configured. Set GOOGLE_GENAI_API_KEY or enable Vertex mode with project/location.',
+        ),
+      ),
     );
   }
 
@@ -567,9 +982,18 @@ export async function pollVideoGenerationOperation(
     throw new Error('Missing video operation name for polling.');
   }
 
-  const nextOperation = (await client.operations.getVideosOperation({
-    operation: operationReference as never,
-  })) as unknown as VertexVideoOperationPayload & { done?: boolean; error?: { message?: string } };
+  const nextOperation = await withProviderRetry(
+    async () =>
+      ((await clientContext.client.operations.getVideosOperation({
+        operation: operationReference as never,
+      })) as unknown as VertexVideoOperationPayload & {
+        done?: boolean;
+        error?: { message?: string };
+      }),
+    {
+      shouldRetry: (meta) => meta.category !== 'model_not_found_or_no_access',
+    },
+  );
 
   if (!nextOperation.done) {
     return {

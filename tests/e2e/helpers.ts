@@ -1,7 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 
 const REQUIRED_LIVE_ENV_KEYS = [
-  'GOOGLE_API_KEY',
   'TAVILY_API_KEY',
   'GRADIUM_API_KEY',
   'HERA_API_KEY',
@@ -19,6 +18,19 @@ export function getLiveGate() {
     return {
       enabled: false,
       reason: 'Set LIVE_DEPTH=full to run the full live matrix.',
+    };
+  }
+
+  const hasGoogleKey = Boolean(
+    process.env.GOOGLE_GENAI_API_KEY ||
+      process.env.GOOGLE_API_KEY ||
+      process.env.GEMINI_API_KEY,
+  );
+
+  if (!hasGoogleKey) {
+    return {
+      enabled: false,
+      reason: 'Missing live env key: GOOGLE_GENAI_API_KEY (or GOOGLE_API_KEY/GEMINI_API_KEY).',
     };
   }
 

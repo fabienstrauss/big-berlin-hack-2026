@@ -21,7 +21,14 @@ App: [http://localhost:3000](http://localhost:3000)
 Set local secrets in `.env.local` (already git-ignored):
 
 ```bash
+# Auth mode (default: hackathon-safe API key first)
+GOOGLE_GENAI_AUTH_MODE=api_key_first
+GOOGLE_GENAI_API_KEY=...
+
+# Backward-compatible aliases (optional)
 GOOGLE_API_KEY=...
+GEMINI_API_KEY=...
+
 GOOGLE_GENAI_API_VERSION=v1beta
 
 TAVILY_API_KEY=...
@@ -36,15 +43,17 @@ GCS_SIGNED_URL_TTL_SECONDS=86400
 # Optional overrides
 VERTEX_IMAGE_MODEL=gemini-2.5-flash-image
 VERTEX_VIDEO_MODEL=veo-3.0-fast-generate-001
+VERTEX_VIDEO_MODEL_FALLBACKS=
 VERTEX_VIDEO_DURATION_SECONDS=8
 ```
 
-ADC mode is still supported for deploy/local via:
+Vertex mode is optional and must be explicit (`GOOGLE_GENAI_USE_VERTEXAI=true` or `GOOGLE_GENAI_AUTH_MODE=vertex_first|vertex_only`):
 
 ```bash
 gcloud auth application-default login
 GOOGLE_CLOUD_PROJECT=...
-GOOGLE_CLOUD_LOCATION=europe-west4
+GOOGLE_CLOUD_LOCATION=us-central1
+VERTEX_VIDEO_LOCATION=us-central1
 ```
 
 ## Supabase CLI migration (additive)
@@ -125,7 +134,7 @@ PLAYWRIGHT_LIVE=1 LIVE_DEPTH=full npm run test:e2e:live
 
 Required env for live suite:
 
-- `GOOGLE_API_KEY`
+- `GOOGLE_GENAI_API_KEY` (or `GOOGLE_API_KEY`/`GEMINI_API_KEY`)
 - `TAVILY_API_KEY`
 - `GRADIUM_API_KEY`
 - `HERA_API_KEY`

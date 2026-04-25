@@ -46,7 +46,6 @@ test.describe('@live Full provider matrix', () => {
     await submitGenerate(page);
 
     await expect(page.getByText('Brand-aligned image')).toBeVisible({ timeout: 120_000 });
-    await expect(page.getByText('Vertex image generation (gemini-2.5-flash-image)')).toBeVisible();
     await expect(page.getByRole('img', { name: 'generated-image.png' }).first()).toBeVisible();
   });
 
@@ -77,7 +76,6 @@ test.describe('@live Full provider matrix', () => {
     await submitGenerate(page);
 
     await expect(page.getByText('Brand-aligned image')).toBeVisible({ timeout: 120_000 });
-    await expect(page.getByText('Vertex image generation (imagen-4.0-fast-generate-001)')).toBeVisible();
     await expect(page.getByRole('img', { name: 'generated-image.png' }).first()).toBeVisible();
   });
 

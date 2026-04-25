@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 
+import {
+  formatGenerationErrorMessage,
+  toGenerationErrorMeta,
+} from '@/app/lib/server/providers/vertex';
 import { getVideoGenerationJob, pollVideoGenerationJob } from '@/app/lib/server/video-jobs';
 
 export const runtime = 'nodejs';
@@ -23,9 +27,11 @@ export async function GET(
 
     return NextResponse.json(result);
   } catch (error) {
+    const errorMeta = toGenerationErrorMeta(error);
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : 'Failed to fetch generation job',
+        error: formatGenerationErrorMessage(errorMeta),
+        errorMeta,
       },
       { status: 500 },
     );

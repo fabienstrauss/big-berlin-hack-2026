@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 
 import type { GenerateInput } from '@/app/lib/canvas/contracts';
+import {
+  formatGenerationErrorMessage,
+  toGenerationErrorMeta,
+} from '@/app/lib/server/providers/vertex';
 import { createVideoGenerationJob } from '@/app/lib/server/video-jobs';
 
 export const runtime = 'nodejs';
@@ -14,9 +18,11 @@ export async function POST(request: Request) {
       status: result.status === 'failed' ? 200 : 202,
     });
   } catch (error) {
+    const errorMeta = toGenerationErrorMeta(error);
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : 'Failed to create generation job',
+        error: formatGenerationErrorMessage(errorMeta),
+        errorMeta,
       },
       { status: 500 },
     );

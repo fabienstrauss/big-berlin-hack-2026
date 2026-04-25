@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import type {
   GenerateInput,
+  GenerationErrorMeta,
   GenerationJobCreateResponse,
   GenerationJobResponse,
   GenerationJobStatus,
@@ -13,9 +14,11 @@ import { searchWithTavily } from './providers/tavily';
 import {
   composeGenerationPrompt,
   extractBrandProfile,
+  formatGenerationErrorMessage,
   pollVideoGenerationOperation,
   rewriteNarrationScript,
   startVideoGenerationWithVertex,
+  toGenerationErrorMeta,
   type VertexVideoOperationPayload,
 } from './providers/vertex';
 
@@ -34,57 +37,30 @@ type GenerationJobRow = {
 
 type OperationEnvelope = {
   model: string;
+  location?: string;
+  errorMeta?: GenerationErrorMeta;
   operationName?: string;
   operation?: VertexVideoOperationPayload;
 };
 
 const GENERATION_JOBS_TABLE = 'generation_jobs';
 
-function extractProviderErrorMessage(error: unknown) {
-  if (error instanceof Error) {
-    const raw = error.message?.trim();
-
-    if (!raw) {
-      return 'Unknown provider error';
-    }
-
-    try {
-      const parsed = JSON.parse(raw) as {
-        error?: {
-          message?: string;
-          status?: string;
-          details?: Array<{
-            links?: Array<{
-              url?: string;
-            }>;
-          }>;
-        };
-      };
-
-      if (parsed.error?.message) {
-        const statusPrefix = parsed.error.status ? `[${parsed.error.status}] ` : '';
-        const activationUrl = parsed.error.details
-          ?.flatMap((detail) => detail.links ?? [])
-          .find((link) => Boolean(link.url))
-          ?.url;
-
-        if (activationUrl) {
-          return `${statusPrefix}${parsed.error.message} Activate API: ${activationUrl}`;
-        }
-
-        return `${statusPrefix}${parsed.error.message}`;
-      }
-    } catch {
-      // Keep original message if it is not JSON payload.
-    }
-
-    return raw;
+function getOperationEnvelope(row: GenerationJobRow): OperationEnvelope | null {
+  const payload = row.operation_payload;
+  if (!payload || typeof payload !== 'object') {
+    return null;
   }
 
-  return 'Unknown provider error';
+  return payload as OperationEnvelope;
+}
+
+function getRowErrorMeta(row: GenerationJobRow): GenerationErrorMeta | null {
+  const operationEnvelope = getOperationEnvelope(row);
+  return operationEnvelope?.errorMeta ?? null;
 }
 
 function toJobResponse(row: GenerationJobRow): GenerationJobResponse {
+  const errorMeta = getRowErrorMeta(row);
   return {
     jobId: row.id,
     status: row.status,
@@ -94,6 +70,7 @@ function toJobResponse(row: GenerationJobRow): GenerationJobResponse {
     artifactUrl: row.artifact_url,
     warning: row.warning,
     error: row.error,
+    errorMeta,
     completedWithWarning: Boolean(row.warning),
   };
 }
@@ -239,6 +216,7 @@ export async function createVideoGenerationJob(
 
     const operationEnvelope: OperationEnvelope = {
       model: start.model,
+      location: start.location,
       operationName,
       operation: {
         name: operationName,
@@ -253,9 +231,12 @@ export async function createVideoGenerationJob(
         composedPrompt,
         narrationScript,
       },
-      operation_payload: operationEnvelope,
       warning: null,
       error: null,
+      operation_payload: {
+        ...operationEnvelope,
+        errorMeta: null,
+      },
     });
 
     return {
@@ -263,14 +244,20 @@ export async function createVideoGenerationJob(
       status: updatedRow.status,
     };
   } catch (providerError) {
+    const errorMeta = toGenerationErrorMeta(providerError);
     const failedRow = await updateJobRow(id, {
       status: 'failed',
-      error: extractProviderErrorMessage(providerError),
+      error: formatGenerationErrorMessage(errorMeta),
+      operation_payload: {
+        errorMeta,
+      },
     });
 
     return {
       jobId: id,
       status: failedRow.status,
+      error: failedRow.error,
+      errorMeta,
     };
   }
 }
@@ -287,13 +274,20 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
     return toJobResponse(row);
   }
 
-  const operationEnvelope = row.operation_payload as OperationEnvelope | null;
+  const operationEnvelope = getOperationEnvelope(row);
   const operationName = getOperationName(operationEnvelope);
 
   if (!operationEnvelope?.model || !operationName) {
+    const errorMeta = toGenerationErrorMeta(
+      new Error('Missing video operation payload for job polling.'),
+    );
     const failedRow = await updateJobRow(jobId, {
       status: 'failed',
-      error: 'Missing video operation payload for job polling.',
+      error: formatGenerationErrorMessage(errorMeta),
+      operation_payload: {
+        ...(operationEnvelope ?? {}),
+        errorMeta,
+      },
     });
 
     return toJobResponse(failedRow);
@@ -302,18 +296,24 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
   let polled: Awaited<ReturnType<typeof pollVideoGenerationOperation>>;
 
   try {
-    polled = await pollVideoGenerationOperation(operationName, operationEnvelope.model);
+    polled = await pollVideoGenerationOperation(
+      operationName,
+      operationEnvelope.model,
+      operationEnvelope.location,
+    );
   } catch (error) {
+    const errorMeta = toGenerationErrorMeta(error);
     const failedRow = await updateJobRow(jobId, {
       status: 'failed',
       operation_payload: {
         ...operationEnvelope,
+        errorMeta,
         operationName,
         operation: {
           name: operationName,
         },
       },
-      error: extractProviderErrorMessage(error),
+      error: formatGenerationErrorMessage(errorMeta),
     });
 
     return toJobResponse(failedRow);
@@ -336,10 +336,16 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
   }
 
   if (!polled.output) {
+    const errorMeta = toGenerationErrorMeta(
+      new Error(
+        polled.error ?? 'Video generation completed without playable payload from provider.',
+      ),
+    );
     const failedRow = await updateJobRow(jobId, {
       status: 'failed',
       operation_payload: {
         ...operationEnvelope,
+        errorMeta,
         operationName: polled.operation.name ?? operationName,
         operation: {
           name: polled.operation.name ?? operationName,
@@ -347,9 +353,7 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
           error: polled.operation.error,
         },
       },
-      error:
-        polled.error ??
-        'Video generation completed without playable payload from provider.',
+      error: formatGenerationErrorMessage(errorMeta),
     });
 
     return toJobResponse(failedRow);
@@ -362,6 +366,7 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
     operation_payload: {
       ...operationEnvelope,
       operationName: polled.operation.name ?? operationName,
+      errorMeta: null,
       operation: {
         name: polled.operation.name ?? operationName,
         done: true,

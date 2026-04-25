@@ -15,9 +15,12 @@ import { searchWithTavily, type TavilySearchOutput } from './providers/tavily';
 import {
   composeGenerationPrompt,
   extractBrandProfile,
+  formatGenerationErrorMessage,
   generateImageWithVertex,
   generateVideoWithVertex,
+  getConfiguredAuthMode,
   isVertexConfigured,
+  toGenerationErrorMeta,
   rewriteNarrationScript,
 } from './providers/vertex';
 
@@ -252,7 +255,8 @@ export async function buildGenerationPayload(
       };
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown generation error';
+    const errorMeta = toGenerationErrorMeta(error);
+    const message = formatGenerationErrorMessage(errorMeta);
 
     if (!isVertexConfigured() && input.type !== 'animation') {
       return createMockGenerationPayload(input);
@@ -280,7 +284,7 @@ export async function buildGenerationPayload(
           accent: 'from-fuchsia-100 via-white to-rose-50',
           prompt: composedPrompt,
           body: compactText(narrationScript, 420),
-          chips: ['adc-first', providerLabel.toLowerCase()],
+          chips: [getConfiguredAuthMode(), providerLabel.toLowerCase()],
           assetItems: [visualAsset],
         },
       ),
