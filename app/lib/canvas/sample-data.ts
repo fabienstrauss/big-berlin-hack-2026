@@ -1,17 +1,4 @@
-import { MarkerType } from 'reactflow';
-
 import type { CanvasAssetItem, CanvasEdge, CanvasNode, CanvasNodeData } from './types';
-
-const defaultEdgeStyle = {
-  stroke: '#94a3b8',
-  strokeWidth: 1.5,
-};
-
-export const edgeDefaults = {
-  animated: true,
-  markerEnd: { type: MarkerType.ArrowClosed },
-  style: defaultEdgeStyle,
-};
 
 function createNode(
   id: string,
@@ -99,35 +86,23 @@ export const initialNodes: CanvasNode[] = [
     title: 'Short-form reel about content myths',
     subtitle: 'Prompted output preview',
     accent: 'from-emerald-100 via-white to-lime-50',
+    status: 'done',
     prompt:
       'Generate a 20-second reel covering 3 content myths founders still believe, with fast cuts and bold captions.',
+    hideAssetMeta: true,
     assetItems: [
       {
         id: 'seed-video',
         label: 'content-myths-reel.mp4',
         type: 'video',
-        meta: 'Mock Veo output',
+        meta: '',
         previewUrl: createPreviewDataUrl('3 CONTENT MYTHS', 'Veo video', '#bbf7d0', '#86efac'),
       },
     ],
-    chips: ['Veo video', 'High energy'],
   }),
 ];
 
-export const initialEdges: CanvasEdge[] = [
-  {
-    id: 'edge-hook-carousel',
-    source: 'node-hook',
-    target: 'node-carousel',
-    ...edgeDefaults,
-  },
-  {
-    id: 'edge-carousel-video',
-    source: 'node-carousel',
-    target: 'node-video',
-    ...edgeDefaults,
-  },
-];
+export const initialEdges: CanvasEdge[] = [];
 
 export function createQuickNoteNode(
   id: string,

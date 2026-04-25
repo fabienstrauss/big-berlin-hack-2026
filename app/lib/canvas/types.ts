@@ -30,14 +30,22 @@ export type CanvasNodeData = {
   title: string;
   subtitle: string;
   accent: string;
+  templateId?: string;
+  status?: 'generating' | 'error' | 'done';
+  statusMessage?: string;
   editable?: boolean;
   body?: string;
   bullets?: string[];
   chips?: string[];
   prompt?: string;
+  imagePrompt?: string;
+  videoPrompt?: string;
+  animationPrompt?: string;
+  hideAssetMeta?: boolean;
   assetItems?: CanvasAssetItem[];
   stackItems?: CanvasStackItem[];
   onUpdate?: (patch: Partial<CanvasNodeData>) => void;
+  onDelete?: () => void;
 };
 
 export type CanvasNode = Node<CanvasNodeData>;

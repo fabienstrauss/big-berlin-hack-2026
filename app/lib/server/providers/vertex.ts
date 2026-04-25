@@ -1,4 +1,5 @@
 import {
+  GenerateVideosOperation,
   GoogleGenAI,
   Modality,
   createPartFromBase64,
@@ -41,7 +42,30 @@ export type VertexVideoOutput = {
 };
 
 export type VertexVideoOperationPayload = {
+  name?: string;
   done?: boolean;
+  error?: {
+    message?: string;
+  };
+  response?: {
+    generatedVideos?: Array<{
+      video?: {
+        mimeType?: string;
+        videoBytes?: string;
+        uri?: string;
+      };
+    }>;
+    generateVideoResponse?: {
+      generatedSamples?: Array<{
+        video?: {
+          mimeType?: string;
+          videoBytes?: string;
+          uri?: string;
+        };
+      }>;
+    };
+  };
+  [key: string]: unknown;
 };
 
 let cachedClient: GoogleGenAI | null = null;
@@ -431,10 +455,21 @@ function normalizeVertexVideoOutput(
             uri?: string;
           };
         }>;
+        generateVideoResponse?: {
+          generatedSamples?: Array<{
+            video?: {
+              mimeType?: string;
+              videoBytes?: string;
+              uri?: string;
+            };
+          }>;
+        };
       }
     | undefined;
 
-  const video = response?.generatedVideos?.[0]?.video;
+  const video =
+    response?.generatedVideos?.[0]?.video ??
+    response?.generateVideoResponse?.generatedSamples?.[0]?.video;
 
   if (!video) {
     return null;
@@ -493,12 +528,12 @@ export async function startVideoGenerationWithVertex(
 
   return {
     model,
-    operation: operation as VertexVideoOperationPayload,
+    operation: operation as unknown as VertexVideoOperationPayload,
   };
 }
 
 export async function pollVideoGenerationOperation(
-  operationPayload: VertexVideoOperationPayload,
+  operationPayload: VertexVideoOperationPayload | string,
   model: string,
 ): Promise<{
   done: boolean;
@@ -514,8 +549,26 @@ export async function pollVideoGenerationOperation(
     );
   }
 
+  let operationReference: VertexVideoOperationPayload;
+
+  if (typeof operationPayload === 'string') {
+    const operation = new GenerateVideosOperation();
+    operation.name = operationPayload;
+    operationReference = operation as unknown as VertexVideoOperationPayload;
+  } else if (
+    typeof (operationPayload as { _fromAPIResponse?: unknown })._fromAPIResponse === 'function'
+  ) {
+    operationReference = operationPayload;
+  } else if (operationPayload.name) {
+    const operation = new GenerateVideosOperation();
+    operation.name = operationPayload.name;
+    operationReference = operation as unknown as VertexVideoOperationPayload;
+  } else {
+    throw new Error('Missing video operation name for polling.');
+  }
+
   const nextOperation = (await client.operations.getVideosOperation({
-    operation: operationPayload as never,
+    operation: operationReference as never,
   })) as unknown as VertexVideoOperationPayload & { done?: boolean; error?: { message?: string } };
 
   if (!nextOperation.done) {

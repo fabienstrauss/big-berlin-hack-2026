@@ -1,6 +1,8 @@
 type TopNavigationProps = {
   persistenceStatus: 'local-only' | 'loading' | 'ready' | 'saving' | 'saved' | 'error';
   persistenceError?: string | null;
+  currentStep: number;
+  onStepClick: (step: number) => void;
 };
 
 function getStatusLabel(status: TopNavigationProps['persistenceStatus']) {
@@ -30,49 +32,46 @@ function getStatusLabel(status: TopNavigationProps['persistenceStatus']) {
 export function TopNavigation({
   persistenceStatus,
   persistenceError,
+  currentStep,
+  onStepClick,
 }: TopNavigationProps) {
+  const steps = [
+    { id: 1, label: 'BRAINSTORMING' },
+    { id: 2, label: 'CHOICE' },
+    { id: 3, label: 'GENERATING' },
+  ];
+
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex justify-center px-4 pt-4">
-      <div className="pointer-events-auto flex w-full max-w-6xl items-center justify-between rounded-full border border-white/70 bg-white/88 px-4 py-3 shadow-[0_18px_45px_-28px_rgba(15,23,42,0.35)] backdrop-blur-xl">
-        <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
-            <span className="text-sm font-semibold text-slate-700">SC</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-900">
-              Social Content Lab
-            </p>
-            <p className="text-xs text-slate-500">
-              Build the board now, persist it with Supabase
-            </p>
-          </div>
-        </div>
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex justify-center bg-transparent px-4 pt-6">
+      <div className="pointer-events-auto flex items-center gap-2">
+        <nav className="flex items-center gap-1 rounded-full border border-white/20 bg-slate-900/10 p-1 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] backdrop-blur-xl">
+          {steps.map((step) => (
+            <button
+              key={step.id}
+              onClick={() => onStepClick(step.id)}
+              className={[
+                'rounded-full px-4 py-1.5 text-[10px] font-bold tracking-[0.12em] transition-all',
+                currentStep === step.id
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-white/50 hover:text-slate-900',
+              ].join(' ')}
+            >
+              {step.id}. {step.label}
+            </button>
+          ))}
+        </nav>
 
-        <div className="flex items-center gap-3">
-          <span
-            title={persistenceError ?? getStatusLabel(persistenceStatus)}
-            className={[
-              'rounded-full border px-3 py-2 text-xs font-medium',
-              persistenceStatus === 'error'
-                ? 'border-red-200 bg-red-50 text-red-600'
-                : 'border-slate-200 bg-slate-50 text-slate-600',
-            ].join(' ')}
-          >
-            {getStatusLabel(persistenceStatus)}
-          </span>
-
-          <nav className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 p-1">
-            <span className="rounded-full bg-slate-900 px-3 py-2 text-xs font-semibold tracking-[0.16em] text-white">
-              1. BRAINSTORMING
-            </span>
-            <span className="rounded-full px-3 py-2 text-xs font-medium tracking-[0.16em] text-slate-400">
-              2. CHOICE
-            </span>
-            <span className="rounded-full px-3 py-2 text-xs font-medium tracking-[0.16em] text-slate-400">
-              3. GENERATING
-            </span>
-          </nav>
-        </div>
+        <span
+          title={persistenceError ?? getStatusLabel(persistenceStatus)}
+          className={[
+            'rounded-full border border-white/20 px-3 py-1.5 text-[10px] font-bold tracking-[0.12em] shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] backdrop-blur-xl transition-colors',
+            persistenceStatus === 'error'
+              ? 'bg-red-500/10 text-red-600'
+              : 'bg-slate-900/10 text-slate-600',
+          ].join(' ')}
+        >
+          {getStatusLabel(persistenceStatus).toUpperCase()}
+        </span>
       </div>
     </header>
   );

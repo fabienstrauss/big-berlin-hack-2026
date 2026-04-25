@@ -1,8 +1,11 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import {
   AudioLines,
+  LoaderCircle,
+  Trash2,
   FileText,
   ImageIcon,
   NotebookPen,
@@ -11,7 +14,7 @@ import {
   Sparkles,
   Video,
 } from 'lucide-react';
-import { Handle, Position, type NodeProps } from 'reactflow';
+import type { NodeProps } from 'reactflow';
 
 import type { CanvasAssetItem, CanvasNodeData } from '../../../lib/canvas/types';
 
@@ -71,6 +74,30 @@ function NodeGlyph({ kind }: { kind: CanvasNodeData['kind'] }) {
   return <Sparkles className="size-4" />;
 }
 
+function PromptCard({
+  title,
+  icon,
+  prompt,
+}: {
+  title: string;
+  icon: ReactNode;
+  prompt?: string;
+}) {
+  if (!prompt) {
+    return null;
+  }
+
+  return (
+    <div className="rounded-2xl border border-white/80 bg-white/80 p-3 backdrop-blur-sm">
+      <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+        {icon}
+        <span>{title}</span>
+      </div>
+      <p className="text-sm leading-6 text-slate-700">{prompt}</p>
+    </div>
+  );
+}
+
 export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
   return (
     <div
@@ -82,17 +109,20 @@ export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
         data.accent,
       ].join(' ')}
     >
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="!size-5 !border-[3px] !border-white !bg-slate-400 !shadow-md"
-      />
-
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3">
-          <span className="inline-flex w-fit items-center rounded-full border border-slate-200 bg-white/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 backdrop-blur">
-            {data.badge}
-          </span>
+          <div className="flex items-center justify-between gap-3">
+            <span className="inline-flex w-fit items-center rounded-full border border-slate-200 bg-white/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 backdrop-blur">
+              {data.badge}
+            </span>
+            <button
+              type="button"
+              onClick={data.onDelete}
+              className="nodrag flex size-8 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-500 transition hover:text-slate-900"
+            >
+              <Trash2 className="size-4" />
+            </button>
+          </div>
 
           <div className="flex items-start gap-3">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white/85 text-slate-700 shadow-sm">
@@ -135,12 +165,38 @@ export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
           </div>
         ) : null}
 
-        {data.prompt ? (
-          <div className="rounded-2xl border border-white/80 bg-white/80 p-3 backdrop-blur-sm">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Prompt
-            </p>
-            <p className="text-sm leading-6 text-slate-700">{data.prompt}</p>
+        <PromptCard
+          title="Prompt"
+          icon={<Sparkles className="size-3.5" />}
+          prompt={data.prompt}
+        />
+        {data.kind !== 'template' && (
+          <>
+            <PromptCard
+              title="Image Prompt"
+              icon={<ImageIcon className="size-3.5" />}
+              prompt={data.imagePrompt}
+            />
+            <PromptCard
+              title="Video Prompt"
+              icon={<Video className="size-3.5" />}
+              prompt={data.videoPrompt}
+            />
+            <PromptCard
+              title="Animation Prompt"
+              icon={<Sparkles className="size-3.5" />}
+              prompt={data.animationPrompt}
+            />
+          </>
+        )}
+
+        {data.kind === 'generation' && data.status === 'generating' ? (
+          <div className="rounded-2xl border border-white/80 bg-white/80 p-4 backdrop-blur-sm">
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
+              <LoaderCircle className="size-4 animate-spin" />
+              <span>{data.statusMessage ?? 'Generating asset...'}</span>
+            </div>
+            <div className="h-40 animate-pulse rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 via-white to-slate-200" />
           </div>
         ) : null}
 
@@ -224,7 +280,7 @@ export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
                   </div>
                 ) : null}
 
-                {item.type !== 'document' ? (
+                {item.type !== 'document' && !data.hideAssetMeta ? (
                   <div className="flex items-center justify-between border-t border-slate-100 px-3 py-2 text-sm text-slate-600">
                     <div className="min-w-0 flex flex-1 items-center gap-2">
                       <MediaIcon type={item.type} />
@@ -268,12 +324,6 @@ export function CanvasCardNode({ data, selected }: CanvasCardNodeProps) {
           </div>
         ) : null}
       </div>
-
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="!size-5 !border-[3px] !border-white !bg-slate-400 !shadow-md"
-      />
     </div>
   );
 }

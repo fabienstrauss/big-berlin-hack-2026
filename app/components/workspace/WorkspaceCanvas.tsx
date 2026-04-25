@@ -1,10 +1,10 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { ImageIcon, Sparkles, Video } from 'lucide-react';
 import {
   Background,
   BackgroundVariant,
-  type Edge,
   Controls,
   MiniMap,
   ReactFlow,
@@ -14,7 +14,9 @@ import { useCanvasBoard } from '../../hooks/useCanvasBoard';
 import { FloatingToolbar } from './FloatingToolbar';
 import { TopNavigation } from './TopNavigation';
 import { WorkspaceActionPanel } from './WorkspaceActionPanel';
+import { TemplateGallery } from './TemplateGallery';
 import { CanvasCardNode } from './nodes/CanvasCardNode';
+import { contentTemplates } from '../../lib/templates/catalog';
 
 type ActivePanel = 'upload' | 'generate' | 'scrape' | 'template' | null;
 
@@ -51,19 +53,19 @@ export function WorkspaceCanvas() {
     edges,
     onNodesChange,
     onEdgesChange,
-    onConnect,
-    onEdgeDoubleClick,
     actions,
     persistenceStatus,
     persistenceError,
-  } =
-    useCanvasBoard();
+    isCanvasReady,
+  } = useCanvasBoard();
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+  const [currentStep, setCurrentStep] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [generateType, setGenerateType] = useState<'image' | 'video' | 'animation'>('image');
   const [generatePrompt, setGeneratePrompt] = useState('');
   const [generateContextQuery, setGenerateContextQuery] = useState('');
@@ -71,12 +73,11 @@ export function WorkspaceCanvas() {
   const [brandNotes, setBrandNotes] = useState('');
   const [brandFiles, setBrandFiles] = useState<File[]>([]);
   const [enableAudio, setEnableAudio] = useState(false);
+  const [useAsyncVideoJobs, setUseAsyncVideoJobs] = useState(false);
   const [audioVoiceId, setAudioVoiceId] = useState('');
   const [audioFormat, setAudioFormat] = useState<'wav' | 'opus' | 'pcm'>('wav');
   const [searchQuery, setSearchQuery] = useState('');
   const [includeImages, setIncludeImages] = useState(true);
-  const [templateProduct, setTemplateProduct] = useState('');
-  const [templateVibe, setTemplateVibe] = useState('editorial minimal');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const generateBrandInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -89,14 +90,10 @@ export function WorkspaceCanvas() {
 
   const closePanel = () => {
     setActivePanel(null);
+    setActionError(null);
   };
+
   const handlePaneClick = useCallback(() => setActivePanel(null), []);
-  const handleEdgeDoubleClick = useCallback(
-    (_event: React.MouseEvent, edge: Edge) => {
-      onEdgeDoubleClick(edge.id);
-    },
-    [onEdgeDoubleClick],
-  );
 
   const handleUploadSubmit = async () => {
     if (!selectedFiles.length) {
@@ -104,6 +101,7 @@ export function WorkspaceCanvas() {
     }
 
     setIsUploading(true);
+    setActionError(null);
 
     try {
       await actions.addOwnContent(selectedFiles);
@@ -114,6 +112,8 @@ export function WorkspaceCanvas() {
       }
 
       closePanel();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Upload failed');
     } finally {
       setIsUploading(false);
     }
@@ -125,6 +125,7 @@ export function WorkspaceCanvas() {
     }
 
     setIsGenerating(true);
+    setActionError(null);
 
     try {
       const serializedBrandAssets = await Promise.all(
@@ -135,7 +136,13 @@ export function WorkspaceCanvas() {
         })),
       );
 
-      await actions.addGeneratedContent({
+      const generationMode =
+        generateType === 'video' && useAsyncVideoJobs && !enableAudio
+          ? 'async'
+          : 'sync';
+
+      actions.addGeneratedContent({
+        mode: generationMode,
         type: generateType,
         prompt: generatePrompt.trim(),
         contextQuery: generateContextQuery.trim(),
@@ -148,18 +155,24 @@ export function WorkspaceCanvas() {
           outputFormat: audioFormat,
         },
       });
+
       setGeneratePrompt('');
       setGenerateContextQuery('');
       setIncludeGenerationResearch(true);
       setBrandNotes('');
       setBrandFiles([]);
       setEnableAudio(false);
+      setUseAsyncVideoJobs(false);
       setAudioVoiceId('');
       setAudioFormat('wav');
+
       if (generateBrandInputRef.current) {
         generateBrandInputRef.current.value = '';
       }
+
       closePanel();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Generation setup failed');
     } finally {
       setIsGenerating(false);
     }
@@ -171,6 +184,7 @@ export function WorkspaceCanvas() {
     }
 
     setIsSearching(true);
+    setActionError(null);
 
     try {
       await actions.addResearchPack({
@@ -181,20 +195,22 @@ export function WorkspaceCanvas() {
       setSearchQuery('');
       setIncludeImages(true);
       closePanel();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Search failed');
     } finally {
       setIsSearching(false);
     }
   };
 
-  const handleTemplateSubmit = async () => {
+  const handleTemplateSubmit = async (templateId: string) => {
     setIsApplyingTemplate(true);
+    setActionError(null);
 
     try {
-      await actions.addTemplate({
-        product: templateProduct.trim(),
-        vibe: templateVibe,
-      });
+      await actions.addTemplate({ templateId });
       closePanel();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Template failed');
     } finally {
       setIsApplyingTemplate(false);
     }
@@ -205,50 +221,51 @@ export function WorkspaceCanvas() {
       <TopNavigation
         persistenceStatus={persistenceStatus}
         persistenceError={persistenceError}
+        currentStep={currentStep}
+        onStepClick={setCurrentStep}
       />
 
       <main className="h-full pt-24">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onEdgeDoubleClick={handleEdgeDoubleClick}
-          onPaneClick={handlePaneClick}
-          deleteKeyCode={['Backspace', 'Delete']}
-          edgesFocusable
-          edgesUpdatable={false}
-          connectOnClick={false}
-          connectionRadius={40}
-          noWheelClassName="nowheel"
-          fitView
-          fitViewOptions={{ padding: 0.2 }}
-          defaultEdgeOptions={{
-            animated: true,
-            style: { stroke: '#94a3b8', strokeWidth: 1.5 },
-          }}
-          proOptions={{ hideAttribution: true }}
-          className="!bg-transparent"
-        >
-          <Background
-            variant={BackgroundVariant.Dots}
-            gap={20}
-            size={1.2}
-            color="#cbd5e1"
-          />
-          <Controls
-            position="top-right"
-            className="!top-4 !right-4 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
-          />
-          <MiniMap
-            pannable
-            zoomable
-            nodeColor={() => '#e2e8f0'}
-            className="!bottom-24 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
-          />
-        </ReactFlow>
+        {isCanvasReady ? (
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onPaneClick={handlePaneClick}
+            deleteKeyCode={['Backspace', 'Delete']}
+            noWheelClassName="nowheel"
+            fitView
+            fitViewOptions={{ padding: 0.2 }}
+            proOptions={{ hideAttribution: true }}
+            className="!bg-transparent"
+          >
+            <Background
+              variant={BackgroundVariant.Dots}
+              gap={20}
+              size={1.2}
+              color="#cbd5e1"
+            />
+            <Controls
+              position="top-right"
+              className="!top-4 !right-4 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
+            />
+            <MiniMap
+              pannable
+              zoomable
+              nodeColor={() => '#e2e8f0'}
+              className="!bottom-24 !rounded-2xl !border !border-slate-200 !bg-white/90 !shadow-lg !backdrop-blur"
+            />
+          </ReactFlow>
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <div className="flex items-center gap-3 rounded-full border border-white/70 bg-white/85 px-5 py-3 text-sm font-medium text-slate-600 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+              <span className="size-3 animate-pulse rounded-full bg-slate-400" />
+              Loading your canvas...
+            </div>
+          </div>
+        )}
       </main>
 
       {activePanel === 'upload' ? (
@@ -258,6 +275,11 @@ export function WorkspaceCanvas() {
           onClose={closePanel}
         >
           <div className="flex flex-col gap-4" data-testid="panel-upload">
+            {actionError ? (
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {actionError}
+              </div>
+            ) : null}
             <input
               ref={fileInputRef}
               type="file"
@@ -316,21 +338,67 @@ export function WorkspaceCanvas() {
           onClose={closePanel}
         >
           <div className="flex flex-col gap-4" data-testid="panel-generate">
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-slate-700">Output type</span>
+            {actionError ? (
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {actionError}
+              </div>
+            ) : null}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-slate-700">Generator</span>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setGenerateType('image')}
+                  className={[
+                    'flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-medium transition',
+                    generateType === 'image'
+                      ? 'border-slate-900 bg-slate-900 text-white'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300',
+                  ].join(' ')}
+                >
+                  <ImageIcon className="size-4" />
+                  Nano Banana
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGenerateType('video')}
+                  className={[
+                    'flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-medium transition',
+                    generateType === 'video'
+                      ? 'border-slate-900 bg-slate-900 text-white'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300',
+                  ].join(' ')}
+                >
+                  <Video className="size-4" />
+                  Veo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGenerateType('animation')}
+                  className={[
+                    'flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-medium transition',
+                    generateType === 'animation'
+                      ? 'border-slate-900 bg-slate-900 text-white'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300',
+                  ].join(' ')}
+                >
+                  <Sparkles className="size-4" />
+                  Hera
+                </button>
+              </div>
               <select
                 value={generateType}
                 onChange={(event) =>
                   setGenerateType(event.target.value as 'image' | 'video' | 'animation')
                 }
                 data-testid="generate-type-select"
-                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
+                className="mt-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
               >
-                <option value="image">Image with Nanobanana</option>
-                <option value="video">Video with Veo</option>
-                <option value="animation">Animation with Hera</option>
+                <option value="image">Nano Banana</option>
+                <option value="video">Veo</option>
+                <option value="animation">Hera</option>
               </select>
-            </label>
+            </div>
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-slate-700">Core prompt</span>
               <textarea
@@ -409,6 +477,19 @@ export function WorkspaceCanvas() {
               />
               Generate narration audio with Gradium
             </label>
+            {generateType === 'video' ? (
+              <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={useAsyncVideoJobs}
+                  disabled={enableAudio}
+                  onChange={(event) => setUseAsyncVideoJobs(event.target.checked)}
+                  data-testid="generate-async-video-toggle"
+                  className="size-4 rounded border-slate-300"
+                />
+                Queue as async Veo job (Supabase + GCS polling)
+              </label>
+            ) : null}
             {enableAudio ? (
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="flex flex-col gap-2">
@@ -444,7 +525,7 @@ export function WorkspaceCanvas() {
                 className="rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!generatePrompt.trim() || isGenerating}
               >
-                {isGenerating ? 'Generating...' : 'Generate and insert'}
+                {isGenerating ? 'Preparing...' : 'Generate and insert'}
               </button>
               <button
                 type="button"
@@ -465,6 +546,11 @@ export function WorkspaceCanvas() {
           onClose={closePanel}
         >
           <div className="flex flex-col gap-4" data-testid="panel-scrape">
+            {actionError ? (
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {actionError}
+              </div>
+            ) : null}
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-slate-700">What should Tavily look for?</span>
               <textarea
@@ -509,50 +595,15 @@ export function WorkspaceCanvas() {
 
       {activePanel === 'template' ? (
         <WorkspaceActionPanel
-          title="Choose A Template"
-          description="Pick a product and a vibe. The canvas will get a reusable content direction card."
+          title="Templates"
+          description="Click a template to add it to your board."
           onClose={closePanel}
         >
-          <div className="flex flex-col gap-4">
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-slate-700">Product</span>
-              <input
-                value={templateProduct}
-                onChange={(event) => setTemplateProduct(event.target.value)}
-                placeholder="Smart water bottle"
-                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
-              />
-            </label>
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-slate-700">Style / vibe</span>
-              <select
-                value={templateVibe}
-                onChange={(event) => setTemplateVibe(event.target.value)}
-                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
-              >
-                <option value="editorial minimal">Editorial minimal</option>
-                <option value="performance ugc">Performance UGC</option>
-                <option value="playful launch">Playful launch</option>
-              </select>
-            </label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleTemplateSubmit}
-                className="rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isApplyingTemplate}
-              >
-                {isApplyingTemplate ? 'Applying...' : 'Add template'}
-              </button>
-              <button
-                type="button"
-                onClick={closePanel}
-                className="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-600 transition hover:text-slate-900"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          <TemplateGallery
+            templates={contentTemplates}
+            onSelect={handleTemplateSubmit}
+            isApplying={isApplyingTemplate}
+          />
         </WorkspaceActionPanel>
       ) : null}
 

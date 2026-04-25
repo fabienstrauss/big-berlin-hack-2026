@@ -4,6 +4,7 @@ import type {
   TavilyInput,
   TemplateInput,
 } from './contracts';
+import { contentTemplates } from '../templates/catalog';
 
 function createPreviewDataUrl(title: string, eyebrow: string, from: string, to: string) {
   const svg = `
@@ -63,7 +64,9 @@ export function createMockGenerationPayload(
                 ? 'Veo mock output'
                 : 'Hera mock output',
           accent: 'from-fuchsia-100 via-white to-rose-50',
+          status: 'done',
           prompt: input.prompt,
+          hideAssetMeta: true,
           assetItems: [
             {
               id: 'generated-asset',
@@ -72,12 +75,7 @@ export function createMockGenerationPayload(
                   ? 'generated-image.png'
                   : 'generated-video.mp4',
               type: input.type === 'image' ? 'image' : 'video',
-              meta:
-                input.type === 'image'
-                  ? 'Sample preview for Nanobanana'
-                  : input.type === 'video'
-                    ? 'Sample preview for Veo'
-                    : 'Sample preview for Hera',
+              meta: '',
               previewUrl: preview,
             },
           ],
@@ -162,34 +160,38 @@ export function createMockSearchPayload(input: TavilyInput): CanvasInsertionPayl
 export function createMockTemplatePayload(
   input: TemplateInput,
 ): CanvasInsertionPayload {
+  const template = contentTemplates.find((item) => item.id === input.templateId);
+
+  if (!template) {
+    return {
+      items: [],
+    };
+  }
+
   return {
     items: [
       {
         key: 'template-result',
         data: {
           kind: 'template',
-          badge: 'Template Pick',
-          title: `${input.product || 'Product'} in ${input.vibe} style`,
-          subtitle: 'Reusable content direction',
+          badge: template.category,
+          title: template.title,
+          subtitle: template.vibe,
           accent: 'from-indigo-100 via-white to-sky-50',
-          bullets:
-            input.vibe === 'editorial minimal'
-              ? [
-                  'Use restrained copy with premium whitespace.',
-                  'Lead with detail shots and quiet serif typography.',
-                  'Keep CTA subtle and confidence-driven.',
-                ]
-              : input.vibe === 'performance ugc'
-                ? [
-                    'Start with a problem hook in the first second.',
-                    'Feature a face, hands-on usage, and punchy captions.',
-                    'Push to a direct CTA with urgency.',
-                  ]
-                : [
-                    'Use bright color blocking and kinetic pacing.',
-                    'Build scenes around delight and surprise.',
-                    'End with a playful CTA and sticker-style labels.',
-                  ],
+          templateId: template.id,
+          body: template.description,
+          bullets: template.hooks,
+          imagePrompt: template.imagePrompt,
+          videoPrompt: template.videoPrompt,
+          animationPrompt: template.animationPrompt,
+          hideAssetMeta: true,
+          assetItems: template.assets?.map((asset, index) => ({
+            id: `${template.id}-asset-${index}`,
+            label: asset.label,
+            type: asset.type,
+            meta: '',
+            previewUrl: asset.src,
+          })),
         },
       },
     ],

@@ -1,11 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { initialEdges, initialNodes } from './sample-data';
+import { initialNodes } from './sample-data';
 import type { CanvasEdge, CanvasNode, CanvasNodeData } from './types';
+import { CANVAS_ASSETS_BUCKET, CANVAS_BOARD_ID } from '../supabase/constants';
 
 export const CANVAS_STATE_TABLE = 'canvas_state';
-export const CANVAS_ASSETS_BUCKET = 'canvas-assets';
-export const CANVAS_BOARD_ID = 'main';
 
 type StoredCanvasStateRow = {
   id: string;
@@ -31,7 +30,7 @@ export function getDefaultCanvasState() {
   return {
     id: CANVAS_BOARD_ID,
     nodes: sanitizeNodesForStorage(initialNodes),
-    edges: initialEdges,
+    edges: [],
   };
 }
 

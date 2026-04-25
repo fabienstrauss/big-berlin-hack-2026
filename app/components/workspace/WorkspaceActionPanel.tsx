@@ -17,18 +17,18 @@ export function WorkspaceActionPanel({
 }: WorkspaceActionPanelProps) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-28 z-20 flex justify-center px-4">
-      <div className="pointer-events-auto w-full max-w-xl rounded-[28px] border border-white/70 bg-white/90 p-5 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-base font-semibold text-slate-900">{title}</h2>
-            <p className="mt-1 text-sm text-slate-500">{description}</p>
+      <div className="pointer-events-auto w-full max-w-lg rounded-[32px] border border-white/40 bg-white/80 p-4 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.3)] backdrop-blur-2xl">
+        <div className="mb-3 flex items-center justify-between px-2">
+          <div className="flex min-w-0 flex-col gap-1">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">{title}</h2>
+            <p className="truncate text-xs text-slate-500">{description}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:text-slate-900"
+            className="flex size-7 items-center justify-center rounded-full border border-slate-200/50 bg-white/50 text-slate-400 transition hover:bg-white hover:text-slate-900"
           >
-            <X className="size-4" />
+            <X className="size-3.5" />
           </button>
         </div>
         {children}

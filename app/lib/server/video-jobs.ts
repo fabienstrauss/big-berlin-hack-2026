@@ -34,7 +34,8 @@ type GenerationJobRow = {
 
 type OperationEnvelope = {
   model: string;
-  operation: VertexVideoOperationPayload;
+  operationName?: string;
+  operation?: VertexVideoOperationPayload;
 };
 
 const GENERATION_JOBS_TABLE = 'generation_jobs';
@@ -95,6 +96,25 @@ function toJobResponse(row: GenerationJobRow): GenerationJobResponse {
     error: row.error,
     completedWithWarning: Boolean(row.warning),
   };
+}
+
+function getOperationName(operationEnvelope: OperationEnvelope | null) {
+  if (!operationEnvelope) {
+    return null;
+  }
+
+  if (operationEnvelope.operationName) {
+    return operationEnvelope.operationName;
+  }
+
+  const operationName =
+    operationEnvelope.operation &&
+    typeof operationEnvelope.operation === 'object' &&
+    typeof (operationEnvelope.operation as { name?: unknown }).name === 'string'
+      ? (operationEnvelope.operation as { name: string }).name
+      : null;
+
+  return operationName;
 }
 
 function getSupabaseOrThrow() {
@@ -211,10 +231,19 @@ export async function createVideoGenerationJob(
       model: input.modelOverrides?.vertexVideoModel,
       durationSeconds: input.modelOverrides?.vertexVideoDurationSeconds,
     });
+    const operationName = start.operation.name;
+
+    if (!operationName) {
+      throw new Error('Vertex did not return an operation name for async video polling.');
+    }
 
     const operationEnvelope: OperationEnvelope = {
       model: start.model,
-      operation: start.operation,
+      operationName,
+      operation: {
+        name: operationName,
+        done: start.operation.done,
+      },
     };
 
     const updatedRow = await updateJobRow(id, {
@@ -259,8 +288,9 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
   }
 
   const operationEnvelope = row.operation_payload as OperationEnvelope | null;
+  const operationName = getOperationName(operationEnvelope);
 
-  if (!operationEnvelope?.model || !operationEnvelope.operation) {
+  if (!operationEnvelope?.model || !operationName) {
     const failedRow = await updateJobRow(jobId, {
       status: 'failed',
       error: 'Missing video operation payload for job polling.',
@@ -269,17 +299,36 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
     return toJobResponse(failedRow);
   }
 
-  const polled = await pollVideoGenerationOperation(
-    operationEnvelope.operation,
-    operationEnvelope.model,
-  );
+  let polled: Awaited<ReturnType<typeof pollVideoGenerationOperation>>;
+
+  try {
+    polled = await pollVideoGenerationOperation(operationName, operationEnvelope.model);
+  } catch (error) {
+    const failedRow = await updateJobRow(jobId, {
+      status: 'failed',
+      operation_payload: {
+        ...operationEnvelope,
+        operationName,
+        operation: {
+          name: operationName,
+        },
+      },
+      error: extractProviderErrorMessage(error),
+    });
+
+    return toJobResponse(failedRow);
+  }
 
   if (!polled.done) {
     const runningRow = await updateJobRow(jobId, {
       status: 'running',
       operation_payload: {
         ...operationEnvelope,
-        operation: polled.operation,
+        operationName: polled.operation.name ?? operationName,
+        operation: {
+          name: polled.operation.name ?? operationName,
+          done: false,
+        },
       },
     });
 
@@ -291,7 +340,12 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
       status: 'failed',
       operation_payload: {
         ...operationEnvelope,
-        operation: polled.operation,
+        operationName: polled.operation.name ?? operationName,
+        operation: {
+          name: polled.operation.name ?? operationName,
+          done: true,
+          error: polled.operation.error,
+        },
       },
       error:
         polled.error ??
@@ -307,7 +361,11 @@ export async function pollVideoGenerationJob(jobId: string): Promise<GenerationJ
     status: 'completed',
     operation_payload: {
       ...operationEnvelope,
-      operation: polled.operation,
+      operationName: polled.operation.name ?? operationName,
+      operation: {
+        name: polled.operation.name ?? operationName,
+        done: true,
+      },
     },
     artifact_path: stored.artifactPath ?? null,
     artifact_url: stored.artifactUrl ?? null,
