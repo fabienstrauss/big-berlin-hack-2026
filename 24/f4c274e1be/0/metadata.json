@@ -1,0 +1,23 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "24f4c274e1be",
+  "session_id": "019dc57c-ac3b-73b3-94f3-56dce34cf77c",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T18:39:36.779035Z",
+  "branch": "feature/video-pipeline",
+  "checkpoints_count": 1,
+  "files_touched": [],
+  "agent": "Codex",
+  "model": "gpt-5.3-codex",
+  "turn_id": "32e769500bbf",
+  "token_usage": {
+    "input_tokens": 944108,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 35869056,
+    "output_tokens": 134115,
+    "api_call_count": 380
+  },
+  "session_metrics": {
+    "turn_count": 22
+  }
+}
