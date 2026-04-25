@@ -1,0 +1,51 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "26f7c6bee79d",
+  "session_id": "019dc57c-ac3b-73b3-94f3-56dce34cf77c",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T18:37:11.158226Z",
+  "branch": "feature/video-pipeline",
+  "checkpoints_count": 2,
+  "files_touched": [],
+  "agent": "Codex",
+  "model": "gpt-5.3-codex",
+  "turn_id": "32e769500bbf",
+  "token_usage": {
+    "input_tokens": 944108,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 35869056,
+    "output_tokens": 134115,
+    "api_call_count": 380
+  },
+  "session_metrics": {
+    "turn_count": 22
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 5,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".vscode/settings.json": 5
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 8,
+      "user_lines_removed": 3,
+      "agent_lines_added": 1,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".vscode/settings.json": 5,
+        "app/lib/server/video-jobs.ts": 1,
+        "app/lib/supabase/constants.ts": 2
+      },
+      "user_removed_per_file": {
+        "app/lib/server/video-jobs.ts": 1,
+        "app/lib/supabase/constants.ts": 2
+      }
+    }
+  ]
+}
