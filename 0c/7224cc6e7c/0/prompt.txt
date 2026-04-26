@@ -1355,3 +1355,69 @@ please ensure you can comit it to the main branch https://github.com/fabienstrau
 
 ## My request for Codex:
 please ensure you can comit it to the main branch https://github.com/fabienstrauss/big-berlin-hack-2026 and update the readme also
+
+---
+
+# Context from my IDE setup:
+
+## Open tabs:
+- README.md: README.md
+- big-berlin-hack-2026.iml: .idea/big-berlin-hack-2026.iml
+- settings.json: .vscode/settings.json
+- .gitignore: .gitignore
+- remotion.config.ts: cat-video/remotion.config.ts
+
+## My request for Codex:
+PLEASE IMPLEMENT THIS PLAN:
+## Direct-to-Main Delivery Plan (Fabien Repo + README)
+
+### Summary
+- Implement the **Gradium manual voiceover add-on** (Step 3 only, video cards only) without changing Veo generation flow.
+- Update README to document the new add-on, env vars, and usage.
+- Deliver with a **direct push to `main`** on `https://github.com/fabienstrauss/big-berlin-hack-2026`.
+
+### Implementation Changes
+- Backend:
+  - Add Gradium provider and new endpoint: `POST /api/campaign/voiceover`.
+  - Endpoint accepts manual script text and generates downloadable MP3 voiceover.
+  - Keep existing `/api/campaign/generate` logic unchanged.
+- Supabase (non-breaking):
+  - Add nullable `voiceover_*` columns to `generated_content`.
+  - Store voiceover file in `generated-content` bucket and persist metadata in DB.
+  - Extend delete logic to remove optional voiceover object if present.
+- Frontend:
+  - In Step 3 result cards, add `Add Gradium Voiceover` action for completed video jobs.
+  - Show script input, generate action, audio preview, and download button.
+  - No voiceover UI on image jobs.
+- README updates:
+  - Add “Gradium Voiceover Add-On” section (manual workflow).
+  - Add env vars: `GRADIUM_API_KEY`, optional `GRADIUM_VOICE_ID`.
+  - Add new API route docs: `POST /api/campaign/voiceover`.
+  - Add short “How to use in submission demo” notes.
+
+### Main Branch Commit/Push Plan
+- Work on local `main` (already tracking `origin/main` for Fabien repo).
+- Stage only relevant files (exclude unrelated dirty files like `.gitignore`, `package-lock.json`, `demo-video`).
+- Use one focused commit (code + migration + README).
+- Push directly: `git push origin main`.
+- Verify:
+  - `git rev-parse HEAD` equals `origin/main`.
+  - `README.md` on `origin/main` contains the new Gradium section.
+
+### Test Plan
+- Regression:
+  - Existing image/video campaign generation still works unchanged.
+- Voiceover:
+  - Video card manual prompt -> MP3 generated -> audio preview + download works.
+  - Image card does not show voiceover action.
+  - Reload preserves voiceover metadata and player.
+- Failure handling:
+  - Missing Gradium key returns clean error from voiceover endpoint only.
+  - Base generation unaffected.
+- Supabase:
+  - Migration is additive and does not break existing rows.
+
+### Assumptions
+- Direct push to `main` is intentional and approved.
+- Gradium remains a separate manual add-on, not merged into Veo output pipeline.
+- Voiceover output default is MP3.
