@@ -1,0 +1,181 @@
+have a look at the generations page. for the images and videos displayed there i want a button to download seperatly.
+
+---
+
+can you make so i can see the videos and images when clicking on it in full res and format. thinking of some kind of lightbox thing. also now when we reload it will remove from ui all existing ones and generate news ones but old ones are still there. old ones should be still there but dont wipe them from view, leave them and have just the new ones added then
+
+---
+
+on the choices page we dont need the animation option since we dont use it, remove please
+
+---
+
+no on the canvas we still want the hera even though it might not work right now
+
+---
+
+how complex would it be to have more than one canvas?
+
+---
+
+ok lets maybe not add that complexity since its only for a hackathon. what i want is that for image gen it is actually using the reference image as reference. i think it is not doing so right now, correct?
+
+---
+
+the download buttons are z level higher than the context inspector. please fix
+
+---
+
+in the final prompt for generating the content can we have some kind of weights? currently i feel like it is applying to specific information from the content. also with text its weird it seems it applies buzz words to generating the content. which often is not needed. how would you refine this whole generation to refine it a bit more? what i also would want to be able to regenerate each generated content individually by reuplaoding to nanobanana/veo with the file itself and a refining prompt.
+
+---
+
+what did you change  POST /api/context/pack 200 in 503ms (next.js: 4ms, application-code: 499ms)
+[generate] Starting image generation for instagram
+[generate] → Gemini image request (gemini-3-pro-image-preview, 9:16)
+[generate] ← Gemini image response: 200
+[generate] Image received (image/jpeg), uploading to storage…
+[generate] Uploading image to storage…
+[generate] Saving record to DB…
+⨯ ReferenceError: NextResponse is not defined
+    at POST (app/api/campaign/generate/route.ts:64:5)
+  62 |     return NextResponse.json(result);
+  63 |   } catch (error) {
+> 64 |     return NextResponse.json(
+     |     ^
+  65 |       { error: error instanceof Error ? error.message : 'Generation failed' },
+  66 |       { status: 500 },
+  67 |     );
+ POST /api/campaign/generate 500 in 21.4s (next.js: 3ms, application-code: 21.4s)
+
+ so that that error occurse??
+
+---
+
+explain to me how you implement the weighing?
+
+---
+
+cool what i think would be benefitial as well for images on the choice page to not only use a template but also uplaod a reference photo for consistency. for example uplaod a pic of my product so it can generate the image where our product is actually in. then for the refining step have it that the text editor opens in a way that the complete row does expand because of the refining, maybe have it move over the image, you know what i mean?
+
+---
+
+getting weird error when trying to generate new content. btw refining works perfectly. i get this error: choiceConfigArtifact is not defined
+
+---
+
+on reload the refined image is gone and the old one is there. why that?
+
+---
+
+ok now generating new works but not refining.
+
+---
+
+ok and also find a better way for the button because we are not actually regenerate all
+
+---
+
+has the wipe all a safety check like ask for conformation?
+
+---
+
+and for the video gen is it actually referencing our given video?
+
+---
+
+maybe make the clear all just wipe from ui but not actual bucket?
+
+---
+
+for the choice of image let us also add options for format like with video.
+
+---
+
+can you have a look in the image gen if we really use the aspect ratio selected? because i choosed 1:1 but still got 9:16
+
+---
+
+For two of the template videos i actually have the prompt, maybe you can add in the catalog?? see yourself: first is the tutorial thing. edit the prompt so it is clean because i scraped from random website @product:51fd4d9a-d907-450f-8886-4b5f82fadb09 Authentic amateur-style UGC in a bright bathroom: white tiles, soft natural daylight from a window, real-life details (folded towel, small plant, simple ceramics). Handheld feel with subtle micro-shake, natural smartphone-lens look, no cinematic grading. Feels like a real girl filming a quick clip for friends. The phone, camera, and any mirror reflection of a phone or hands holding a phone must never be visible. No mirrors showing the filming setup at all — if a mirror appears, it only shows her face and the room, never a device. 0–2s — Visual hook: Extreme close-up of the girl's face, slightly off-center, lit by soft window light. She leans in fast with wide surprised eyes and a half-smile, like she just noticed something amazing on her skin. Natural ambient sound: faint water drip + her soft excited "okay wait—". Tiny handheld wobble. No on-screen text. 2–4s: Quick cut — her hand brings [PRODUCT] up next to her cheek, turning it once so the label catches the light. She says in casual upbeat American English: "I literally cannot believe how good this is." 4–7s: Tight close-up of her hands applying [PRODUCT] to her skin — real texture, real motion, product visibly going on. Soft bathroom room tone. Voiceover: "Look how it just melts in — my skin already feels insane." 7–10s: Medium shot of her face and shoulders, soft daylight, she touches the area where she applied it and turns her face gently side to side in the light to show the glow. Small natural giggle. Says: "Okay, I'm obsessed. I'm not going back." 10–12s: Final close-up: both hands hold [PRODUCT] up near her face, she gives a small playful shrug and a genuine smile, clip ends mid-motion like a real social post. Audio: Only her voice + natural bathroom room tone (faint water, soft tile echo). No music, no sound effects, no narrator. Voice: warm, friendly, mid-20s American accent, conversational, natural breaths and pauses, pe
+
+---
+
+this is for the hyper motion: chocolate japanese style commercial, with chocolate crunching, pieces breaking, hands passing chocolate to each other, japanese happy people smiling while biting, and these little characters animated maybe expand prompt lol
+
+---
+
+ok for the fashion image i have a more detailed prompt, maybe you can edit that in the catalog: A full-body, centered portrait photograph of a young East Asian male model, with a composed, direct gaze. He stands on a red and white striped asphalt track. His long hair is styled in two precise pigtail braids, and he wears a dark green wool beret. He is wearing a black turtleneck base layer, a prominent red knit varsity cardigan with the letters "GPT" in white block text on the left chest and white striped cuffs and hem, relaxed-fit black fleece-lined sweatpants, and distinctive red and white low-top skate sneakers with "NO NAME" text on the midsole. Suspended directly behind him, from a frame and tensioned cables, is a massive, ornate, light gold and beige Persian-style tapestry or rug, covered in a detailed baroque filigree pattern. The scene is set in an industrial port area during golden hour, under a clear, deep blue sky with light clouds. In the background, there is a pile of shipping containers, a gantry crane base, weathered corrugated metal storage buildings, and a distant white delivery van. Strong, low-angled golden sunlight illuminates the scene, casting complex, sharp, detailed shadows of the suspension frame and cables onto the tapestry and the ground. The composition is straight-on, eye-level, with a rich, filmic quality and shallow depth of field, rendering textures in deep focus. The entire composition has a high-end editorial and photographic finish with rich, saturated colors and deep shadows.
+
+---
+
+for the magazine thing i have this prompt A vintage, textured cream-colored art paper poster with a distressed, low-fidelity offset-print style. At the top center, very large, bold serif typography forms a prominent heading, accompanied to its left by a distinct square logo emblem. Below the main heading, a line of smaller, contrasting-colored subtext runs across the page. The center of the poster features a meticulously detailed illustration in high-contrast tones: a depiction of a happy, panting, medium-sized, reddish-tan and white short-legged dog sitting comfortably on a modern lounge chair. The chair has padded cushions in deep blue and a distinctive continuous curved chrome-like tubular metal cantilever frame. Below this main visual, there is a section title in smaller text, followed by multiple columns of dense, smaller serif body text blocks, with key words and phrases bolded throughout for emphasis. A small animal paw print icon is placed at the end of the text blocks. At the very bottom edge of the poster, a fine line of small serif text provides company branding and address details. The entire composition has a high-quality, aged print aesthetic with rich, saturated colors, particularly the deep blue and reddish-tan, against deep, textured shadows.
+
+---
+
+can i also give you new videos i added to the templates? i have added sport_template.mp4 which uses this prompt High-energy cinematic promotional video, vertical format. Close-up of hands tightening gym gloves, sweat dripping, shoes hitting the gym floor. Fast cuts of intense workout movements, heavy breathing, determination. Slow motion shots of effort: lifting, jumping, running. Powerful facial expressions and movement. Final shot: confident stance after workout, strong posture, proud expression. Camera style: dynamic handheld mixed with slow motion. Lighting: high contrast gym lighting, dramatic shadows. Pacing: fast, aggressive, motivating. Visual tone: intense, energetic, empowering. Ultra realistic textures, cinematic lighting, professional commercial quality, 4k.
+
+---
+
+ok now please learning_template.mp4 with Relatable cinematic promotional video for vertical social media. A student desk cluttered with notebooks, sticky notes, and a laptop full of tabs. The student looks overwhelmed before an exam. They open an AI note app. Instantly, notes organize themselves, key points highlight, summaries appear clean and readable. The desk becomes tidy, the student relaxed and focused, studying confidently with headphones on. Camera style: close-up portrait framing, realistic handheld feel. Lighting: soft desk lamp transitioning to bright daylight. Pacing: engaging, hopeful, motivating. Visual tone: modern, relatable, uplifting. Ultra realistic, cinematic lighting, shallow depth of field, commercial quality, 4k.
+
+---
+
+ok now coffee_template.mp4 with Warm cinematic promotional video, vertical format. A cozy kitchen in early morning light. Coffee being poured slowly into a ceramic mug, steam rising beautifully. Close-up of hands holding the warm cup near a window while sunlight fills the room. Peaceful morning routine, calm breathing. A person journaling, smiling gently, enjoying the first sip. Camera style: macro close-ups, slow gentle movement. Lighting: warm sunrise light, soft shadows. Pacing: slow, comforting, aesthetic. Visual tone: cozy, peaceful, inviting. Ultra realistic steam, cinematic lighting, shallow depth of field, commercial quality, 4k.
+
+---
+
+please now edit the y2k prompt and so on: A vibrant, Y2K-inspired streetwear promotional poster set against a rich, deep blue gradient background. At the top, massive, cartoonish 3D block letters in bright yellow with white highlights and dark drop shadows dominate the space, accompanied by a smaller line of bold yellow text above. The central focus is a portrait of a young, confident person wearing a dark oversized hoodie with the hood pulled up over a cream-colored beanie. They are holding a red round lollipop near their mouth. The hoodie features a yellow oval graphic with a simple smiley face. Floating around the subject are graphic, sticker-like overlays of yellow stars with white borders. One star on the left contains a cropped photo of lips and a red lollipop; another on the right features the same smiley face graphic, appearing affixed to the background with a piece of translucent tape. Below the central figure is another bold yellow headline, followed by a block of white, italicized body text. Near the bottom is a bright yellow, pill-shaped call-to-action button. A thin, cream-colored footer bar spans the very bottom edge containing small, dark text. The overall aesthetic is loud, energetic, and heavily graphic-driven.
+
+---
+
+for the mock up thing: A highly cinematic, luxury product commercial video. The visual style mimics a photorealistic, high-end 3D studio render with a focus on extreme macro details and premium textures. 
+
+**Camera Work & Pacing:** Smooth, elegant, and fluid. The camera performs continuous, slow-motion sweeping pans, graceful dollying, and orbital rotations around the product. The focus smoothly glides along the contours and edges of the product, utilizing extreme close-ups to highlight material finishes (like metallic trims, glass, or matte textures).
+
+**Environment & Backgrounds:** The product is placed in abstract, luxurious, and elemental settings. The environments transition smoothly between resting gracefully on undulating, rich silk/satin fabrics to being partially submerged in fine, golden blowing sand. The backgrounds are clean, uncluttered, and purely exist to complement the product's color.
+
+**Lighting & Color Palette:** Dramatic, warm studio lighting with dynamic sweeps. Streaks of light glide across the product's surface to reveal its shape and create glowing reflections. The color grading is rich, warm, and highly saturated, dominated by deep burgundies, luxurious golds, soft coppers, and warm amber tones. 
+
+**Overall Vibe:** Sophisticated, mesmerizing, sleek, and high-tech. The motion is rhythmic and perfectly smooth, designed to evoke a sense of premium quality and cutting-edge design.
+
+---
+
+for the unboxing this please: A casual, fast-paced, "aesthetic lifestyle" unboxing video shot from a first-person POV. The visual style mimics authentic, high-quality User-Generated Content (UGC) favored by lifestyle influencers.
+
+**Camera Work & Pacing:** Handheld and slightly shaky to emphasize authenticity. The pacing is rapid and energetic, utilizing snappy, rhythmic jump cuts. Transitions are quick and physical (e.g., using the motion of opening a flap or a brief white flash to cut to the next stage).
+
+**Environment & Backgrounds:** A bright, cozy, and meticulously curated desk or tabletop setup. The primary surface is clean and bright (like white wood or marble). The background is slightly out of focus but features cute, relatable lifestyle decor (e.g., small plants, neat stationery organizers, soft ambient lamps, or a microphone). 
+
+**Lighting & Color Palette:** Soft, abundant natural daylight flooding in from a nearby window. The color grading is light, airy, and warm, emphasizing soft pastels and clean whites, making the scene feel inviting and cozy.
+
+**Shot Sequence & Action:**
+1. The Hook: A generic cardboard shipping box is casually dropped or slid onto the desk.
+2. The Action: Quick, tight macro shots of hands interacting with the packaging (e.g., a box cutter slicing bright tape, fingers flipping open cardboard flaps).
+3. The Reveal: A snappy cut to the pristine product being pulled from the box.
+4. The Hero Shot: The product is held up to the camera by a single hand, resting against the aesthetic background, followed by an extreme close-up of the product label to end the video.
+
+---
+
+ok i added clean_product_template.jpeg with A highly aesthetic, serene, and luxurious editorial product photograph of minimalist skincare. 
+
+The Products: A frosted glass dropper bottle with a shiny gold collar and white rubber bulb, featuring the text "AURUM LUMINOUS SERUM" in fine gold serif typography. Next to it sits a matching open frosted glass jar filled with rich white cream. 
+
+The Setting & Props: The products are elegantly arranged on a thick, porous, beige travertine stone slab that rests across the crisp white edge of a modern ceramic bathtub. Behind the bottle lies a delicate sprig of dried eucalyptus. To the right of the jar is a small, shallow, speckled ceramic dish and a softly draped, champagne-colored silk scrunchie. 
+
+The Background: Soft, sheer, textured light beige linen curtains drape elegantly in the background, adding vertical lines and a sense of calm.
+
+Lighting & Atmosphere: The scene is bathed in strong, warm, direct natural morning sunlight coming from the left. The light casts distinct, sharp geometric shadows from the window frame and curtains across the stone tray and bathtub edge. 
+
+Style: Monochromatic warm neutral color palette (cream, beige, soft gold, off-white). Photorealistic, highly detailed 8k resolution, shallow depth of field focusing on the textures of the stone, silk, and frosted glass. The overall vibe is organic, calming, high-end, and pure.
+
+---
+
+ok the movie poster now A clever, humorous, and highly visual advertising poster design utilizing a unique first-person point-of-view perspective. The overall aesthetic balances photorealism with clean, modern graphic design.
+
+Perspective & Composition: The camera is positioned looking straight up from deep inside a plain, warm-toned corrugated cardboard box. The four interior walls of the box converge steeply toward the top, creating strong leading lines and forming a natural square frame around the opening.
+
+The Visual Hook: Peering down into the box from the outside are two curious subjects—in this case, black-and-white dairy cows with inquisitive expressions. Behind them, framed by the box opening, is a bright, vibrant blue sky dotted with fluffy white clouds.
+
+Typography & Layout: The expansive, shadowed tan surface of the lower interior wall serves as the perfect built-in negative space for typography. A massive, bold, dark grey sans-serif headline dominates the lower half of the poster. Directly beneath it sits a clean, easily readable block of smaller sub-copy. In the bottom right corner, there is a minimalist brand logo accompanied by a company name. A fine line of tracking text runs cleanly along the very bottom edge.
+
+Lighting & Atmosphere: The lighting creates a stark, dramatic contrast. The interior of the box is shaded in warm, earthy browns and tans, which beautifully offsets the brilliant, saturated daylight, crisp whites, and vivid blues of the exterior scene. The overall vibe is playful, disruptive, and highly polished, characteristic of modern, clever consumer goods campaigns. please edit

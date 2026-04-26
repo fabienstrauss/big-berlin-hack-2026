@@ -1,0 +1,173 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "91582ea6b132",
+  "session_id": "1f9159fd-945c-4e79-a037-e1afa5c9e179",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-26T09:26:00.043172Z",
+  "branch": "refine/clean-up",
+  "checkpoints_count": 11,
+  "files_touched": [
+    "app/components/workspace/ChoiceScreen.tsx",
+    "app/components/workspace/TopNavigation.tsx",
+    "app/components/workspace/WorkspaceCanvas.tsx",
+    "app/favicon.ico",
+    "app/lib/campaign/generate.ts",
+    "app/lib/templates/catalog.ts",
+    "supabase/schema.sql"
+  ],
+  "agent": "Gemini CLI",
+  "model": "gemini-3-flash-preview",
+  "turn_id": "93e3dbd6e031",
+  "session_metrics": {
+    "turn_count": 32
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-26T09:25:59.830164Z",
+    "agent_lines": 57,
+    "agent_removed": 53,
+    "human_added": 235,
+    "human_modified": 72,
+    "human_removed": 0,
+    "total_committed": 364,
+    "total_lines_changed": 417,
+    "agent_percentage": 26.378896882494008,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 319,
+      "user_lines_removed": 79,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 7,
+        ".idea/misc.xml": 1,
+        "app/components/workspace/ChoiceScreen.tsx": 32,
+        "app/components/workspace/TopNavigation.tsx": 1,
+        "app/components/workspace/WorkspaceCanvas.tsx": 22,
+        "app/lib/campaign/generate.ts": 52,
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1,
+        "supabase/schema.sql": 187
+      },
+      "user_removed_per_file": {
+        ".idea/big-berlin-hack-2026.iml": 6,
+        ".idea/misc.xml": 1,
+        "app/components/workspace/ChoiceScreen.tsx": 32,
+        "app/components/workspace/TopNavigation.tsx": 1,
+        "app/components/workspace/WorkspaceCanvas.tsx": 8,
+        "app/lib/campaign/generate.ts": 31
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 273,
+      "agent_lines_removed": 70,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 282,
+      "agent_lines_removed": 79,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 301,
+      "agent_lines_removed": 79,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 320,
+      "agent_lines_removed": 79,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 339,
+      "agent_lines_removed": 79,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 348,
+      "agent_lines_removed": 88,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 357,
+      "agent_lines_removed": 97,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 366,
+      "agent_lines_removed": 106,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 17,
+      "user_lines_removed": 0,
+      "agent_lines_added": 385,
+      "agent_lines_removed": 106,
+      "user_added_per_file": {
+        "public/template-assets/README.md": 15,
+        "public/template-assets/images/.gitkeep": 1,
+        "public/template-assets/videos/.gitkeep": 1
+      }
+    }
+  ]
+}
