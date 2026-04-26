@@ -678,3 +678,17 @@ the domain ishttps://virallforge.vercel.app/
 
 ## My request for Codex:
 what is happening?
+
+---
+
+# Context from my IDE setup:
+
+## Open tabs:
+- README.md: README.md
+- big-berlin-hack-2026.iml: .idea/big-berlin-hack-2026.iml
+- settings.json: .vscode/settings.json
+- .gitignore: .gitignore
+- remotion.config.ts: cat-video/remotion.config.ts
+
+## My request for Codex:
+no you need to update the https://github.com/fabienstrauss/big-berlin-hack-2026 this readme
