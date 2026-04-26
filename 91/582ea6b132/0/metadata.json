@@ -1,0 +1,35 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "91582ea6b132",
+  "session_id": "019dc59f-bbbb-7663-9a5e-d480e7ebfe5d",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-26T09:25:51.018506Z",
+  "branch": "refine/clean-up",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "app/components/workspace/TopNavigation.tsx",
+    "supabase/schema.sql"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.4",
+  "turn_id": "5e9a503db477",
+  "token_usage": {
+    "input_tokens": 1120392,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 34475520,
+    "output_tokens": 152559,
+    "api_call_count": 327
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-26T09:25:50.947488Z",
+    "agent_lines": 186,
+    "agent_removed": 0,
+    "human_added": 180,
+    "human_modified": 1,
+    "human_removed": 0,
+    "total_committed": 367,
+    "total_lines_changed": 442,
+    "agent_percentage": 42.081447963800905,
+    "metric_version": 2
+  }
+}
