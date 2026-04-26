@@ -1,0 +1,89 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "1af68c4d556f",
+  "session_id": "019dc942-65a1-76f0-b37c-a453d02f10d6",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-26T11:26:35.445085Z",
+  "branch": "main",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "README.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.3-codex",
+  "turn_id": "91fedaa6a595",
+  "token_usage": {
+    "input_tokens": 970372,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 18028928,
+    "output_tokens": 76048,
+    "api_call_count": 207
+  },
+  "session_metrics": {
+    "turn_count": 19
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 1278,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2070387,
+      "agent_lines_removed": 108,
+      "user_added_per_file": {
+        ".playwright-mcp/page-2026-04-26T11-13-43-778Z.yml": 629,
+        ".playwright-mcp/page-2026-04-26T11-13-48-659Z.yml": 649
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 1278,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2070398,
+      "agent_lines_removed": 140,
+      "user_added_per_file": {
+        ".playwright-mcp/page-2026-04-26T11-13-43-778Z.yml": 629,
+        ".playwright-mcp/page-2026-04-26T11-13-48-659Z.yml": 649
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 1278,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2070735,
+      "agent_lines_removed": 140,
+      "user_added_per_file": {
+        ".playwright-mcp/page-2026-04-26T11-13-43-778Z.yml": 629,
+        ".playwright-mcp/page-2026-04-26T11-13-48-659Z.yml": 649
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 1278,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2070735,
+      "agent_lines_removed": 140,
+      "user_added_per_file": {
+        ".playwright-mcp/page-2026-04-26T11-13-43-778Z.yml": 629,
+        ".playwright-mcp/page-2026-04-26T11-13-48-659Z.yml": 649
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 1278,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2070735,
+      "agent_lines_removed": 140,
+      "user_added_per_file": {
+        ".playwright-mcp/page-2026-04-26T11-13-43-778Z.yml": 629,
+        ".playwright-mcp/page-2026-04-26T11-13-48-659Z.yml": 649
+      }
+    }
+  ]
+}
