@@ -25,3 +25,62 @@ I now connected a fork of fabians project to vercel so that it will get all the 
 
 ## My request for Codex:
 build it
+
+---
+
+# Context from my IDE setup:
+
+## Open tabs:
+- big-berlin-hack-2026.iml: .idea/big-berlin-hack-2026.iml
+- settings.json: .vscode/settings.json
+- .gitignore: .gitignore
+- remotion.config.ts: cat-video/remotion.config.ts
+- CatSample.tsx: cat-video/src/CatSample.tsx
+
+## My request for Codex:
+PLEASE IMPLEMENT THIS PLAN:
+## Execution Packet: README Update in Fabian Repo
+
+### Summary
+- Implement the README rewrite directly in `fabienstrauss/big-berlin-hack-2026` on `main` via `@github` connector.
+- Replace the default template with project-accurate docs (setup, env, Supabase schema, API routes, deployment URL).
+
+### Implementation Changes
+1. Fetch current remote README for SHA lock:
+   - `repository_full_name`: `fabienstrauss/big-berlin-hack-2026`
+   - `ref`: `main`
+   - `path`: `README.md`
+2. Update `README.md` using `_update_file`:
+   - Use fetched `sha` (currently `e215bc4ccf138bbc38ad58ad57e92135484b3c0f`)
+   - Commit message: `docs: rewrite README for AI campaign workspace setup and deployment`
+   - Full replacement content includes:
+     - Product overview (workspace canvas, template flow, generation flow)
+     - Stack (Next.js 16, React 19, Supabase, Gemini/Veo, Hera, Tavily)
+     - Local run steps (`npm install`, `npm run dev`)
+     - `.env.example` variables and behavior when keys are missing (mock fallback where applicable)
+     - Supabase setup via `supabase/schema.sql` and required buckets/tables
+     - API route reference:
+       - `POST /api/generate`
+       - `POST /api/search`
+       - `POST /api/context/extract`
+       - `POST /api/context/pack`
+       - `POST /api/campaign/generate`
+       - `DELETE /api/campaign/generate`
+       - `POST /api/templates/apply`
+     - Deployment section with:
+       - `https://big-berlin-hack-2026-qn3pt27wx-niranjanxprt-apps.vercel.app`
+
+### Public APIs / Interfaces / Types
+- No code or API changes.
+- Documentation-only update describing existing interfaces and routes.
+
+### Test Plan
+1. Re-fetch `README.md` from `main` and verify commit landed.
+2. Confirm Markdown renders cleanly (headers, code blocks, links).
+3. Cross-check env variables against `.env.example`.
+4. Cross-check route list against files under `app/api/**/route.ts`.
+
+### Assumptions
+- Direct commit to `main` is intentional (no PR workflow).
+- Latest Ready production Vercel URL should be embedded.
+- No fork-sync instructions should be added to README.
