@@ -1,0 +1,25 @@
+{
+  "cli_version": "0.5.6",
+  "checkpoint_id": "62544cf059b2",
+  "strategy": "manual-commit",
+  "branch": "feat/hera-implementation",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "app/api/generate/route.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/62/544cf059b2/0/metadata.json",
+      "transcript": "/62/544cf059b2/0/full.jsonl",
+      "content_hash": "/62/544cf059b2/0/content_hash.txt",
+      "prompt": "/62/544cf059b2/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1120392,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 34475520,
+    "output_tokens": 152559,
+    "api_call_count": 327
+  }
+}

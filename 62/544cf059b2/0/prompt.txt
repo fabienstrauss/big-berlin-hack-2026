@@ -1,0 +1,1 @@
+Inspect the current codebase for choice-page persistence and any existing context-related work that should be reused. Focus on files under app/hooks, app/lib/campaign, app/components/workspace/ChoiceScreen.tsx, and app/lib/supabase. Return a concise summary of relevant types, persistence shape, and any integration risks. Do not edit files.
