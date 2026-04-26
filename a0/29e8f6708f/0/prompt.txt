@@ -1,0 +1,27 @@
+# Context from my IDE setup:
+
+## Active file: .idea/big-berlin-hack-2026.iml
+
+## Open tabs:
+- big-berlin-hack-2026.iml: .idea/big-berlin-hack-2026.iml
+- settings.json: .vscode/settings.json
+- .gitignore: .gitignore
+- remotion.config.ts: cat-video/remotion.config.ts
+- CatSample.tsx: cat-video/src/CatSample.tsx
+
+## My request for Codex:
+I now connected a fork of fabians project to vercel so that it will get all the changes so can you use  [@github](plugin://github@openai-curated) and update the readme with into the fabians repo which I can sync later did you getclartiy on tthat?
+
+---
+
+# Context from my IDE setup:
+
+## Open tabs:
+- big-berlin-hack-2026.iml: .idea/big-berlin-hack-2026.iml
+- settings.json: .vscode/settings.json
+- .gitignore: .gitignore
+- remotion.config.ts: cat-video/remotion.config.ts
+- CatSample.tsx: cat-video/src/CatSample.tsx
+
+## My request for Codex:
+build it
